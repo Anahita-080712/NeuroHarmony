@@ -3,15 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Navbar Only</title>
-
-  <!-- FontAwesome for icons -->
   <script src="https://kit.fontawesome.com/83eb50da7d.js" crossorigin="anonymous"></script>
-
-  <!-- Google Fonts -->
   <link
     href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,200..900;1,200..900&display=swap"
-    rel="stylesheet"
-  >
+    rel="stylesheet">
 
   <style>
     * {
@@ -45,18 +40,18 @@
       color: white;
       font-size: 16px;
       font-weight: 500;
-      padding-bottom: 4px; /* space for underline */
+      padding-bottom: 4px; 
       transition: border-color .2s ease, color .2s ease, font-weight .1s ease;
-      border-bottom: 2px solid transparent; /* default hidden underline */
+      border-bottom: 2px solid transparent; 
     }
 
-    /* Hover underline */
+   
     .nav_options a:hover {
       border-bottom-color: white;
       font-weight: 700;
     }
 
-    /* ACTIVE state */
+   
     .nav_options a.active,
     .nav_options a[aria-current="page"] {
       border-bottom-color: white;
@@ -77,13 +72,13 @@
     #login_btn:hover { background-color: #5ca0f8; }
     #login_btn i { font-size: 1rem; }
 
-    /* Keyboard accessibility */
+   
     .nav_options a:focus-visible {
       outline: 2px solid #fff;
       outline-offset: 4px;
     }
 
-    /* Responsive tweak */
+    
     @media (max-width: 600px) {
       .nav_options { display: none; }
     }
@@ -92,19 +87,19 @@
 <body>
 
   <header class="nav_container">
-    <!-- Logo -->
+   
     <a href="/home">
       <img src="/static/images/logo_gemini.png" alt="Logo" height="50">
     </a>
 
-    <!-- Navigation Links -->
+   
     <nav class="nav_options" id="mainNav">
       <a href="/about"><i class="fa-solid fa-house"></i> &nbsp;About Us</a>
       <a href="/listen_now"><i class="fa-solid fa-headphones-simple"></i> &nbsp;Listen Now</a>
       <a href="/analyze"><i class="fa-solid fa-music"></i> &nbsp;Analyze My Track</a>
     </nav>
 
-    <!-- Login/Logout Button (Jinja) -->
+    
     {% if session.get('uid') %}
       <a href="/logout" id="login_btn" title="Logout">
         <i class="fa-solid fa-right-from-bracket"></i>
@@ -119,7 +114,7 @@
   </header>
 
   <script>
-    // Highlight the active nav link by current path and on click
+    
     document.addEventListener('DOMContentLoaded', () => {
       const links = document.querySelectorAll('#mainNav a');
 

@@ -11,8 +11,8 @@
       --muted:#475569;
       --accent:#007bff;
       --pink:#ff69b4; --blue:#1e90ff; --green:#32cd32;
-      --bar-w:46px;          /* inactive width */
-      --bar-w-active:108px;  /* active width */
+      --bar-w:46px;          
+      --bar-w-active:108px;  
       --bar-radius:10px;
       --shadow: 2px 6px 14px rgba(0,0,0,.12);
       --card:#ffffff;
@@ -42,7 +42,6 @@
     .arrow:active{ transform:scale(.96) }
     .arrow[aria-disabled="true"]{ opacity:.35; pointer-events:none }
 
-    /* Main container: bars + info live together */
     .chart-container{
       flex:1 1 auto;
       display:grid;
@@ -51,17 +50,15 @@
       align-items:stretch;
     }
 
-    /* Left area (bars + coin) */
     .bars-wrap{
       position:relative;
       background:#fff; border-radius:16px; box-shadow:var(--shadow);
-      padding:18px 20px 18px 76px;      /* left padding for coin */
+      padding:18px 20px 18px 76px;     
       display:flex; align-items:flex-end; justify-content:center;
       min-height:420px;
       overflow:hidden;
     }
 
-    /* Floating music “coin” that visually represents the chart */
     .logo-coin{
       position:absolute; left:18px; bottom:18px;
       width:56px; height:56px; border-radius:50%;
@@ -76,7 +73,6 @@
     }
     .logo-coin svg{ width:28px; height:28px; color:#0f1b2b }
 
-    /* Bars */
     .bars{
       display:flex; align-items:flex-end; gap:16px; position:relative;
     }
@@ -108,7 +104,6 @@
     .bar:hover{ filter:brightness(1.04) }
     .bar.active{ width:var(--bar-w-active); transform: translateY(-4px) }
 
-    /* Note badge on the active bar (replaces the numeric bubble) */
     .note-badge{
       position:absolute; left:50%; transform:translate(-50%, -8px);
       bottom:100%;
@@ -124,7 +119,6 @@
       top:100%; border:6px solid transparent; border-top-color:#0f172a;
     }
 
-    /* Labels under bars */
     .labels{
       position:absolute; left:76px; right:20px; bottom:0;
       display:flex; justify-content:center; gap:16px; translate:0 8px;
@@ -136,14 +130,12 @@
     }
     .label.active{ width:var(--bar-w-active); font-weight:700 }
 
-    /* Dots row */
     .dots{ display:flex; gap:8px; justify-content:center; margin-top:6px }
     .dot{
       width:8px; height:8px; border-radius:50%; background:#cbd5e1; transition:transform .2s ease, background .2s ease
     }
     .dot.active{ background:#0ea5e9; transform:scale(1.2) }
 
-    /* Inline info card (to the right of bars) */
     .info-card{
       background:var(--card); border-radius:16px; box-shadow:var(--shadow);
       padding:18px 16px;
@@ -154,14 +146,12 @@
     .info-title{ font-size:1.15rem; margin:0 }
     .info-desc{ margin:0; color:var(--muted); line-height:1.5 }
 
-    /* Small music mark in the card header */
     .info-mark{
       width:28px; height:28px; border-radius:8px; display:grid; place-items:center;
       background:#eef3ff; color:#0f1b2b;
     }
     .info-head{ display:flex; align-items:center; gap:10px }
 
-    /* Responsive: stack card below bars on small screens */
     @media (max-width: 840px){
       .chart-container{ grid-template-columns: 1fr; }
       .bars-wrap{ min-height:440px; padding-left:64px }
@@ -173,7 +163,6 @@
 </head>
 <body>
 
-  <!-- SVG symbols for music note we reuse -->
   <svg width="0" height="0" style="position:absolute; left:-9999px; visibility:hidden" aria-hidden="true">
     <symbol id="icon-music" viewBox="0 0 24 24">
       <path fill="currentColor" d="M19 3v10.55A4 4 0 1 1 17 17V7h-6v8.55A4 4 0 1 1 9 17V5a1 1 0 0 1 1-1h8z"/>
@@ -181,12 +170,9 @@
   </svg>
 
   <div class="chart-wrapper" role="region" aria-label="Three step interactive chart">
-    <!-- LEFT ARROW -->
     <div class="arrow left-arrow" aria-label="Previous step" role="button" tabindex="0">&#9664;</div>
 
-    <!-- BARS + INLINE INFO -->
     <div class="chart-container">
-      <!-- Bars side -->
       <div class="bars-wrap">
         <div class="logo-coin" aria-hidden="true">
           <svg viewBox="0 0 24 24"><use href="#icon-music"/></svg>
@@ -216,7 +202,6 @@
         </div>
       </div>
 
-      <!-- Info side (inline, next to the graph) -->
       <div class="info-card" aria-live="polite" aria-atomic="true">
         <div class="info-meta"><strong id="stepIndex">Step 1</strong> · <span id="stepName">Understand</span></div>
         <div class="info-head">
@@ -235,7 +220,6 @@
       </div>
     </div>
 
-    <!-- RIGHT ARROW -->
     <div class="arrow right-arrow" aria-label="Next step" role="button" tabindex="0">&#9654;</div>
   </div>
 
@@ -247,7 +231,6 @@
       const leftArrow  = document.querySelector('.left-arrow');
       const rightArrow = document.querySelector('.right-arrow');
 
-      // Info elements (inline card)
       const stepIndexEl = document.getElementById('stepIndex');
       const stepNameEl  = document.getElementById('stepName');
       const infoTitle   = document.getElementById('infoTitle');
@@ -255,11 +238,9 @@
 
       let active = 0;
 
-      // Initialize subtle baseline heights and badges
       bars.forEach((b, i) => {
         const base = Math.max(60, (parseInt(b.dataset.height, 10) || 200) * 0.35);
         b.style.height = base + 'px';
-        // Accessible name
         b.setAttribute('aria-label', `${b.dataset.title} — activate`);
       });
 
@@ -279,7 +260,6 @@
           b.classList.toggle('active', isActive);
           b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
 
-          // set height
           if (opts.instant){
             b.style.transitionDuration = '0s';
           } else {
@@ -287,7 +267,6 @@
           }
           b.style.height = (isActive ? target : base) + 'px';
 
-          // bounce feel on active
           if (!opts.instant && isActive){
             b.animate(
               [
@@ -304,7 +283,6 @@
         labels.forEach((l, idx) => l.classList.toggle('active', idx === active));
         dots.forEach((d, idx)   => d.classList.toggle('active', idx === active));
 
-        // Update inline info card
         const bar  = bars[active];
         const title= bar.dataset.title || `Step ${active+1}`;
         const desc = bar.dataset.desc  || '';
@@ -321,7 +299,6 @@
         updateArrows();
       }
 
-      // Arrow handlers
       const goLeft  = () => setActive(active - 1);
       const goRight = () => setActive(active + 1);
       leftArrow .addEventListener('click', goLeft);
@@ -329,7 +306,6 @@
       leftArrow .addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') goLeft(); });
       rightArrow.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') goRight(); });
 
-      // Click/keyboard on bars
       bars.forEach((b, idx) => {
         b.addEventListener('click', () => setActive(idx));
         b.addEventListener('keydown', e => {
@@ -339,18 +315,15 @@
         });
       });
 
-      // Page-level arrow keys
       document.addEventListener('keydown', e => {
         if (e.target.closest('.bar') || e.target.closest('.arrow')) return;
         if (e.key === 'ArrowLeft')  goLeft();
         if (e.key === 'ArrowRight') goRight();
       });
 
-      // First paint
       setActive(0, { instant:true });
       requestAnimationFrame(() => { bars.forEach(b => b.style.transitionDuration = ''); });
 
-      // Keep layout tidy on resize
       window.addEventListener('resize', () => setActive(active, { instant:true }));
     });
   </script>

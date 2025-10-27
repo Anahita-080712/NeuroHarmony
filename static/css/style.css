@@ -21,10 +21,10 @@ nav {
     padding: 10px 20px;
     /* padding-bottom: 20px; */
     color: black;
-    position: fixed; /* Fix the navbar at the top */
+    position: fixed; 
     top: 0;
-    width: 100%; /* Take full width of the viewport */
-    z-index: 3; /* Increased z-index to ensure nav appears above the image */
+    width: 100%; 
+    z-index: 3; 
 }
 
 .logo img {
@@ -72,9 +72,9 @@ nav {
 
 .icons {
     display: flex;
-    align-items: center; /* Add this line to align items vertically */
+    align-items: center;
     flex-shrink: 0;
-    margin-right: 30px; /* Add margin to create space between icons and scrollbar */
+    margin-right: 30px; 
 }
 
 .icons button {
@@ -84,7 +84,7 @@ nav {
 }
 
 .icons button:last-child {
-    margin-right: 0; /* Remove margin from the last icon to prevent extra space */
+    margin-right: 0;
 }
 
 .icons button a {
@@ -147,13 +147,13 @@ nav {
 }
 
 .slider {
-    position: relative; /* Ensure relative positioning for absolute elements */
+    position: relative; 
     display: flex;
     scroll-snap-type: x mandatory;
     height: calc(100vh - 125px);
     scroll-behavior: smooth;
     overflow: hidden; 
-    align-items: center; /* Center the slide content vertically */
+    align-items: center; 
 }
 
 .slider-container {
@@ -221,7 +221,7 @@ nav {
 
 .inspiration-section {
   width: 100%;
-  max-width: 1200px; /* Adjust max width as needed */
+  max-width: 1200px;
   margin: 50px auto;
   padding: 50px;
 }
@@ -257,7 +257,7 @@ nav {
 
 .section-image {
   flex: 1;
-  max-width: 50%; /* Adjust the maximum width of the image container */
+  max-width: 50%; 
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 5px 5px 5px black;
@@ -268,7 +268,6 @@ nav {
   height: 400px;
 }
 
-/* Account section dropdown styling */
 .action {
     position: relative;
     z-index: 5;
@@ -283,30 +282,29 @@ button {
   padding: 0;
   margin: 0;
   position: absolute;
-  top: calc(100% + 10px); /* Adjust as needed to position below the account icon */
+  top: calc(100% + 10px); 
   right: 0;
-  width: 220px; /* Adjust as needed */
+  width: 220px; 
   background-color: #ffffff;
   border-radius: 20px;
   border: 2px ridge rgb(203, 203, 203);
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   opacity: 0;
-  transition: opacity 0.3s ease; /* Smooth transition */
+  transition: opacity 0.3s ease; 
 }
 
 .action ul.show {
   opacity: 1;
 }
-  
-  /* Triangle pointing towards account icon */
+
 .action ul::before {
   content: "";
   position: absolute;
-  top: -20px; /* Adjust as needed */
-  right: 15px; /* Adjust as needed */
+  top: -20px; 
+  right: 15px; 
   border: 10px solid transparent;
-  border-bottom-color: #acb3f4; /* Match background color of the dropdown */
+  border-bottom-color: #acb3f4; 
 }
 
 .action li{
@@ -807,8 +805,8 @@ button {
 }
 
 .form-group {
-display: flex; /* Change to flex to center items */
-justify-content: center; /* Center items horizontally */
+display: flex; 
+justify-content: center; 
 align-items: center;
 position: relative;
 margin-bottom: 20px;

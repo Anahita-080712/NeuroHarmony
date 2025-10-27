@@ -7,7 +7,7 @@
   <title>Test Your Music</title>
   <script src="https://kit.fontawesome.com/83eb50da7d.js" crossorigin="anonymous"></script>
   <style>
-    /* ——— your original CSS exactly as sent ——— */
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -202,13 +202,13 @@
     const main      = document.getElementById('main_container');
     const overlay   = document.getElementById('overlay');
 
-    // when form submits, hide main content and show overlay
+   
     form.addEventListener('submit', () => {
       main.style.display = 'none';
       overlay.style.display = 'flex';
     });
 
-    // styling for drag over
+    
     ['dragenter','dragover'].forEach(evt =>
       dropZone.addEventListener(evt, e => {
         e.preventDefault();
@@ -222,7 +222,7 @@
       })
     );
 
-    // handle drop
+   
     dropZone.addEventListener('drop', e => {
       e.preventDefault();
       const file = e.dataTransfer.files[0];
@@ -236,7 +236,7 @@
       }
     });
 
-    // handle browse selection
+   
     fileInput.addEventListener('change', () => {
       const file = fileInput.files[0];
       if (file && file.type.startsWith('audio/')) {

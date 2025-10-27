@@ -14,7 +14,7 @@
       --muted:#4b5563;
       --card:#ffffff;
       --ring:#e5e7eb;
-      --brand:#447be9; /* accent */
+      --brand:#447be9; 
       --brand-soft:#eaf1ff;
       --shadow:0 10px 28px rgba(0,0,0,.08);
     }
@@ -26,7 +26,6 @@
     }
     .page{max-width:1100px;margin:0 auto;padding:24px 20px 96px}
 
-    /* ---------- HERO ---------- */
     .hero{
       padding: 8px 0 18px;
     }
@@ -59,7 +58,7 @@
       opacity:0; transform: translateY(8px);
       animation: fadeUp .6s .15s ease forwards;
     }
-    /* underline sweep under H1 */
+
     h1::after{
       content:""; display:block; height:4px; margin-top:8px; border-radius:2px;
       background: linear-gradient(90deg, var(--brand), transparent 70%);
@@ -67,16 +66,15 @@
       animation: underline .7s .35s ease-out forwards;
     }
 
-    /* ---------- ILLUSTRATION ---------- */
     .art{
       position:relative; isolation:isolate;
-      width:100%; aspect-ratio: 1.2 / 1; /* keeps size responsive */
+      width:100%; aspect-ratio: 1.2 / 1; 
       filter: drop-shadow(0 10px 22px rgba(0,0,0,.08));
       border-radius:18px; background: var(--card);
       border:1px solid var(--ring);
       overflow:hidden;
     }
-    /* subtle gradient glow */
+
     .art::before{
       content:""; position:absolute; inset:-20%;
       background: radial-gradient(600px 260px at 75% 10%, var(--brand-soft), transparent 60%),
@@ -89,10 +87,8 @@
       50%{ transform: translateY(-6px) }
     }
 
-    /* SVG scales to box */
     .art svg{ position:absolute; inset:0; width:100%; height:100%; z-index:1 }
 
-    /* floating notes around the art */
     .note{
       position:absolute; color:#000; opacity:.14; z-index:2;
       animation: floatY 6s ease-in-out infinite;
@@ -106,7 +102,6 @@
       50%{ transform: translateY(-10px) }
     }
 
-    /* equalizer bars pulse */
     .bar{ transform-origin: bottom center; }
     .bar--1{ animation: pulse 1s -.2s ease-in-out infinite }
     .bar--2{ animation: pulse 1.15s -.05s ease-in-out infinite }
@@ -118,7 +113,6 @@
       50%{ transform: scaleY(1) }
     }
 
-    /* headphone strokes draw in on reveal */
     .draw{
       stroke-dasharray: 560;
       stroke-dashoffset: 560;
@@ -128,10 +122,8 @@
       to{ stroke-dashoffset: 0 }
     }
 
-    /* Parallax layers */
     .p-layer{ will-change: transform; transition: transform .1s linear }
 
-    /* ---------- BODY CARD ---------- */
     .card{
       background:var(--card); border:1px solid var(--ring);
       border-radius:16px; box-shadow:var(--shadow);
@@ -142,7 +134,6 @@
     .card h2{ margin:0 0 10px; font-size:1.1rem }
     .card p{ margin:0; color:var(--muted); line-height:1.8 }
 
-    /* ---------- CONTACT STRIP ---------- */
     .contact{
       margin-top:16px; display:flex; flex-wrap:wrap; gap:12px; align-items:center;
       background:var(--card); border:1px solid var(--ring); border-radius:14px; box-shadow:var(--shadow);
@@ -178,9 +169,7 @@
 
       </div>
     </section>
-      
-   
-    <!-- Vision -->
+
     <section class="card" aria-labelledby="vision">
       <h2 id="vision">The Vision</h2>
       <p>
@@ -191,7 +180,6 @@
       </p>
     </section>
 
-    <!-- Contact -->
     <section class="contact" id="contact">
       <div class="label"><i class="fa-solid fa-paper-plane"></i> Reach out to us</div>
       <a class="email" href="mailto:anahitagupta080712@gmail.com">
@@ -202,7 +190,6 @@
     {% include 'footer.html' %}
 
   <script>
-    // Tiny parallax for the SVG layers (subtle)
     const box = document.getElementById('parallax');
     const layers = box.querySelectorAll('.p-layer');
     let rect = null;
@@ -216,7 +203,6 @@
       const y = (e.clientY - rect.top)  / rect.height - 0.5;
       layers.forEach(el=>{
         const depth = Number(el.dataset.depth || 1);
-        // smaller factor keeps it tasteful
         const dx = -x * depth * 6;
         const dy = -y * depth * 6;
         el.style.transform = `translate(${dx}px, ${dy}px)`;

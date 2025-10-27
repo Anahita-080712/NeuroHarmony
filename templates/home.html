@@ -5,7 +5,7 @@
      <link rel="icon" type="image/png" href="/static/images/logo.png">
   <title>NeuroHarmony</title>
   <script src="https://kit.fontawesome.com/83eb50da7d.js" crossorigin="anonymous"></script>
-  <!-- GSAP core + ScrollTrigger -->
+ 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=music_note" />
@@ -55,7 +55,7 @@
       box-shadow: 0 12px 30px rgba(0,0,0,.12);
     }
 
-    /* ——— floating notes ——— */
+
     .note {
       position: absolute;
       font-size: 1.5rem;
@@ -63,7 +63,7 @@
       animation: floatUp 4s ease-in infinite;
       pointer-events: none;
     }
-    /* staggered delays and positions */
+   
     .note:nth-child(1) { left: 10%;  bottom: 20%; animation-delay: 0s; }
     .note:nth-child(2) { left: 30%;  top: 25%;  animation-delay: 1s; }
     .note:nth-child(3) { left: 23%;  top: 35%; animation-delay: 0.5s; }
@@ -77,7 +77,7 @@
       100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
     }
 
-    /* mission section */
+    
     .mission {
       background: linear-gradient(-45deg,
         #3e75eb, #447be9, #70aeff, #70aeff, #5792f1, #447be9, #3e75eb);
@@ -97,7 +97,7 @@
       line-height: 1.6;
     }
 
-    /* mission cards */
+  
     .mission-cards {
       display: flex;
       gap: 2rem;
@@ -111,7 +111,7 @@
       width: 240px;
       text-align: center;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      opacity: 0;             /* reveal on scroll */
+      opacity: 0;            
       transform: translateY(20px);
     }
     .mission-card .icon {
@@ -138,7 +138,7 @@
       font-size: 2rem;
       margin-bottom: 1rem;
       color: #1f2937;
-      opacity: 0;                 /* reveal on scroll */
+      opacity: 0;                
       transform: translateY(12px);
     }
 
@@ -154,13 +154,13 @@
       padding: 1.5rem;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       width: 280px;
-      /* remove old load animation; reveal via GSAP on scroll */
+     
       opacity: 0;
       transform: translateY(20px);
       animation: none !important;
     }
 
-    /* How It Works layout */
+   
     .wiw-cards {
       display: flex;
       justify-content: space-evenly;
@@ -224,7 +224,7 @@
     .feature{
       width: 500px; max-width: 90vw;
       min-height: 200px;
-      opacity: 0;                 /* reveal on scroll */
+      opacity: 0;                 
       transform: translateY(18px);
     }
     .feature h3 { margin: 0.75rem 0 0.5rem; font-size: 1.125rem; color: #111827; }
@@ -242,15 +242,15 @@
     .pastel-purple { background: #f3defd; }
     .pastel-orange { background: #ffe5d0; }
 
-    /* ===== Wave Timeline (unchanged styles) ===== */
+   
     :root{
       --bg:#f6efe9;
       --green:#46c2a1; --teal:#37c0d1; --purple:#6a64d8; --pink:#e16aa2; --orange:#e88c63;
       --muted:#6f7982; --shadow:0 10px 30px rgba(0,0,0,.10);
       --arrow:rgb(60, 59, 59);
-      --arrow-gap:10px;             /* tip-to-bubble gap */
+      --arrow-gap:10px;             
       --title:#0f1b2b;
-      --marks-top-extend:64px;      /* extra headroom above stage for long, equal arrows */
+      --marks-top-extend:64px;      
     }
 
     .wrap{max-width:1100px;margin:auto;padding:28px 16px 56px}
@@ -260,11 +260,11 @@
     .svgholder{position:relative;width:100%;height:300px}
     @media (max-width:640px){ .svgholder{height:360px} }
 
-    /* Wave */
+    
     svg{position:absolute;inset:0}
     .seg{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:32;filter:drop-shadow(var(--shadow))}
 
-    /* Layers */
+   
     .bubbles{position:absolute;inset:0;pointer-events:none}
     .marks, .tips{
       position:absolute; left:0; right:0; bottom:0;
@@ -273,7 +273,7 @@
       color: white;
     }
 
-    /* Bubbles */
+    
     .bubble{
       position:absolute;width:76px;height:76px;border-radius:50%;
       display:grid;place-items:center;
@@ -296,7 +296,7 @@
       color: white;
     }
 
-    /* Equal-length arrows */
+   
     .mark-arrow--down,
     .mark-arrow--up{
       position:relative;width:0;border-left:2px solid var(--arrow);
@@ -314,7 +314,7 @@
       border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:6px solid var(--arrow);
     }
 
-    /* Tooltips */
+   
     .tips .tip{
       position:absolute; transform:translate(-50%,-100%); min-width:220px; max-width:280px;
       padding:20px 20px; border-radius:10px; background:#ffffff; color:#2a2a2a; box-shadow:0 12px 30px rgba(0,0,0,.15);
@@ -325,29 +325,25 @@
     .tip.tip--below{ transform:translate(-50%,8px); }
     .tip.tip--below::after{ top:-8px; bottom:auto; border-top:none; border-bottom:8px solid #fff; }
     .tip.show{ opacity:1; }
-
-    /* ===== Grooving hover for mission cards ===== */
+  
 .mission-card{
   transition: box-shadow .25s ease, transform .25s ease;
   will-change: transform, box-shadow;
   transform-origin: 50% 100%;
 }
 
-/* Groove on hover / tap */
 .mission-card:hover,
 .mission-card:active {
   animation: nh-groove 1.15s ease-in-out infinite;
   box-shadow: 0 10px 24px rgba(0,0,0,.12), 0 4px 10px rgba(0,0,0,.06);
 }
 
-/* Make the icon bop slightly while the card grooves */
 .mission-card:hover .icon,
 .mission-card:active .icon{
   animation: nh-bop .8s ease-in-out infinite alternate;
   will-change: transform;
 }
 
-/* Optional: subtle glow that pulses with the groove */
 .mission-card:hover::after,
 .mission-card:active::after{
   content:"";
@@ -359,7 +355,6 @@
   pointer-events:none;
 }
 
-/* Keyframes */
 @keyframes nh-groove{
   0%   { transform: translateY(0) rotate(0deg) scale(1); }
   20%  { transform: translateY(-4px) rotate(-1.2deg) scale(1.01); }
@@ -380,7 +375,6 @@
   50%     { box-shadow: 0 0 0 8px rgba(62,117,235,.10); }
 }
 
-/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce){
   .mission-card:hover,
   .mission-card:active,
@@ -396,7 +390,6 @@
   <div class="main_container">
     {% include 'navbar.html' %}
 
-    <!-- ====== HERO ====== -->
     <div class="section1">
       <div class="motto">
         <span class="material-symbols-outlined note">music_note</span>
@@ -420,7 +413,6 @@
       </div>
     </div>
 
-    <!-- ====== MISSION ====== -->
     <div class="mission">
       <p>
         <span style="font-size:30px; font-weight:700;">OUR MISSION</span><br><br>
@@ -447,7 +439,6 @@
       </div>
     </div>
 
-    <!-- ====== HOW IT WORKS ====== -->
     <section class="how-it-works">
       <h2>How It Works</h2>
       <br><br>
@@ -470,13 +461,11 @@
       </div>
     </section>
 
-    <!-- ===== How the Model Was Created (Wave Timeline) ===== -->
     <section class="model-created">
       <h2>How the Model Was Created</h2>
       <br><br><br><br><br>
       <div class="stage">
         <div class="svgholder">
-          <!-- Wave -->
           <svg viewBox="0 0 1100 240" preserveAspectRatio="none" aria-hidden="true">
             <path id="seg1" class="seg" stroke="var(--green)" d="M80 120 A90 90 0 0 1 260 120" />
             <path id="seg2" class="seg" stroke="var(--teal)"  d="M260 120 A90 90 0 0 0 440 120" />
@@ -485,7 +474,6 @@
             <path id="seg5" class="seg" stroke="var(--orange)" d="M800 120 A90 90 0 0 1 980 120" />
           </svg>
 
-          <!-- Bubbles -->
           <div class="bubbles">
             <div class="bubble" data-for="seg1" tabindex="0" aria-label="EEG Data Research"><img class="icon-image" src="/static/images/data-research.png"   alt="" /></div>
             <div class="bubble" data-for="seg2" tabindex="0" aria-label="Benefit Analysis"><img class="icon-image" src="/static/images/analysis.png"         alt="" /></div>
@@ -494,16 +482,13 @@
             <div class="bubble" data-for="seg5" tabindex="0" aria-label="Model Development"><img class="icon-image" src="/static/images/algorithm.png"        alt="" /></div>
           </div>
 
-          <!-- Titles + arrows -->
           <div class="marks"></div>
 
-          <!-- Tooltips -->
           <div class="tips"></div>
         </div>
       </div>
     </section>
 
-    <!-- ===== WHY ===== -->
     <section class="why-neuroharmony">
       <h2>Why Choose NeuroHarmony?</h2>
       <br><br>
@@ -550,12 +535,10 @@
 
   </div>
 
-  <!-- ===== SCRIPTS ===== -->
   <script>
     window.addEventListener('load', () => {
       gsap.registerPlugin(ScrollTrigger);
 
-      /* ========= Wave timeline code (unchanged except we pause & trigger on scroll) ========= */
       const segs  = ['seg1','seg2','seg3','seg4','seg5'].map(id => document.getElementById(id));
       const stage = document.querySelector('.svgholder');
       const marksHost = document.querySelector('.marks');
@@ -567,7 +550,6 @@
       const DIR     = ['up','down','up','down','up'];
       const LABELPOS= ['bottom','top','bottom','top','bottom'];
 
-      // Per-bubble vertical tweaks (+ = move UP). 2 & 4 lifted strongly.
       const BUBBLE_TWEAKS_PX = [-30, 70, -30, 70, -30];
 
       const STEPS = [
@@ -587,7 +569,6 @@
         const GAP_V = (rect.width < 560 ? 6 : 8) / rect.height * VIEW_H;
         const OFFSET = (R - STROKE/2) - (bubbleV/2) - GAP_V;
 
-        // Place bubbles
         document.querySelectorAll('.bubble').forEach((b,i)=>{
           const cx = STARTS[i] + R;
           let cy = BASEY + (DIR[i]==='up' ? -OFFSET : OFFSET);
@@ -597,7 +578,6 @@
           b.style.top  = (cy/VIEW_H*100)+'%';
         });
 
-        // Rebuild marks + tooltips
         marksHost.innerHTML = '';
         tipsHost.innerHTML  = '';
 
@@ -679,7 +659,6 @@
         });
       }
 
-      // Prep wave draw
       segs.forEach(p=>{
         const len=p.getTotalLength();
         p.style.strokeDasharray=len;
@@ -707,11 +686,9 @@
         }, ">-0.2");
       });
 
-      // Initial layout + relayout
       layout();
       window.addEventListener('resize', layout);
 
-      // Pause timeline until scrolled into view
       waveTL.pause(0);
       ScrollTrigger.create({
         trigger: ".model-created .stage",
@@ -720,9 +697,6 @@
         onLeaveBack: () => waveTL.pause(0)
       });
 
-      /* ========= Section scroll transitions ========= */
-
-      // HERO
       gsap.from(".section1 .motto", {
         opacity: 0, y: 30, duration: 0.7,
         scrollTrigger: { trigger: ".section1", start: "top 80%", once: true }
@@ -732,7 +706,6 @@
         scrollTrigger: { trigger: ".section1", start: "top 80%", once: true }
       });
 
-      // MISSION
       gsap.from(".mission p", {
         opacity: 0, y: 20, duration: 0.6,
         scrollTrigger: { trigger: ".mission", start: "top 75%", once: true }
@@ -742,7 +715,6 @@
         scrollTrigger: { trigger: ".mission-cards", start: "top 80%", once: true }
       });
 
-      // HOW IT WORKS
       gsap.to(".how-it-works h2", {
         opacity: 1, y: 0, duration: 0.5,
         scrollTrigger: { trigger: ".how-it-works", start: "top 80%", once: true }
@@ -752,13 +724,11 @@
         scrollTrigger: { trigger: ".how-it-works .wiw-cards", start: "top 85%", once: true }
       });
 
-      // MODEL CREATED (heading)
       gsap.to(".model-created h2", {
         opacity: 1, y: 0, duration: 0.55,
         scrollTrigger: { trigger: ".model-created", start: "top 80%", once: true }
       });
 
-      // WHY NEUROHARMONY
       gsap.to(".why-neuroharmony h2", {
         opacity: 1, y: 0, duration: 0.5,
         scrollTrigger: { trigger: ".why-neuroharmony", start: "top 80%", once: true }

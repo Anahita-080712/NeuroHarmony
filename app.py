@@ -9,7 +9,6 @@ import re
 
 import google.generativeai as genai
 
-# add these near your other imports
 import os, tempfile
 from werkzeug.utils import secure_filename
 
@@ -36,10 +35,8 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 app = Flask(__name__)
-app.secret_key = "replace-this-with-a-strong-secret"  # IMPORTANT: set via env in prod
+app.secret_key = "replace-this-with-a-strong-secret" 
 
-
-# -------------------- Helpers --------------------
 def current_uid():
     """Return UID from session if logged in, else None."""
     return session.get("uid")
@@ -49,13 +46,10 @@ def login_required(fn):
     @wraps(fn)
     def _wrap(*args, **kwargs):
         if not current_uid():
-            # redirect to login page with next param
             return redirect(url_for("login_page", next=request.path))
         return fn(*args, **kwargs)
     return _wrap
 
-
-# -------------------- Routes --------------------
 @app.route("/")
 def index():
     return render_template("home.html")
@@ -70,7 +64,7 @@ def analyze_():
 
 @app.route("/listen_now")
 def stream_now():
-    # 1) Fetch songs and bucket by genre
+   
     docs = db.collection('songs').stream()
     songs = [doc.to_dict() for doc in docs]
 
@@ -86,7 +80,6 @@ def stream_now():
                 "genre": genre
             })
 
-    # 2) If logged in, pull user profile
     uid = session.get("uid")
     user = None
     if uid:
@@ -95,13 +88,11 @@ def stream_now():
             if snap.exists:
                 user = snap.to_dict() or {}
             else:
-                # Optionally create a shell doc so future writes merge cleanly
                 db.collection('users').document(uid).set(
                     {"created_at": firestore.SERVER_TIMESTAMP}, merge=True
                 )
                 user = {}
 
-            # Handy defaults the template can rely on
             user.setdefault("first_name", user.get("name", ""))
             user.setdefault("avatar_url", "/static/images/default_avatar.png")
             user["uid"] = uid
@@ -109,7 +100,6 @@ def stream_now():
             app.logger.exception("Failed to fetch user profile for %s", uid)
             user = {"uid": uid, "first_name": "", "avatar_url": "/static/images/default_avatar.png"}
 
-    # 3) Render with user (None if not logged in)
     return render_template(
         "listen_now.html",
         songs_by_genre=songs_by_genre,
@@ -117,8 +107,6 @@ def stream_now():
         is_logged_in=bool(uid)
     )
 
-
-# ---------- Auth ----------
 @app.route("/login_page")
 def login_page():
     return render_template("login.html")
@@ -129,7 +117,7 @@ def register_page():
 
 @app.route("/login", methods=["POST"])
 def login():
-    # accept form or json
+  
     data = request.form.to_dict() or (request.get_json(silent=True) or {})
     print(data)
     email = data.get("email")
@@ -140,7 +128,6 @@ def login():
         print(user)
         session["uid"] = user["localId"]
         print("done")
-        # redirect if form submit
         if request.is_json:
             return jsonify({"uid": user["localId"], "next": url_for("home")})
         return redirect(url_for("listen_now"))
@@ -152,7 +139,6 @@ def login():
 
 @app.route("/register", methods=["POST"])
 def register():
-    # accept form or json
     data = request.form.to_dict() or (request.get_json(silent=True) or {})
     email = data.get("email")
     password = data.get("password")
@@ -160,12 +146,10 @@ def register():
         user = auth.create_user_with_email_and_password(email, password)
         uid = user["localId"]
         session["uid"] = uid
-        # create the user doc if missing
         db.collection("users").document(uid).set(
             {"email": email, "created_at": firestore.SERVER_TIMESTAMP},
             merge=True
         )
-        # go pick an avatar next
         print("registered")
         return redirect(url_for("choose_avatar"))
     except Exception:
@@ -179,8 +163,6 @@ def logout():
     session.clear()
     return redirect(url_for("home"))
 
-
-# ---------- Avatar Selection ----------
 @app.route("/choose_avatar", methods=["GET"])
 @login_required
 def choose_avatar():
@@ -204,32 +186,26 @@ def save_avatar():
     uid = current_uid()
     db.collection("users").document(uid).set({"avatar": avatar}, merge=True)
 
-    # If it was an XHR, return json; if a form post, redirect
     if request.is_json:
         return jsonify({"status": "ok", "next": url_for("stream_now")})
     return redirect(url_for("stream_now"))
 
-
-# ---------- Existing analyze/test endpoints kept (unchanged) ----------
 @app.route("/test_music", methods=["GET","POST"])
 def test_music():
     data = None
     if request.method == "POST":
         file = request.files.get('track')
         if file and file.filename:
-            # --- save to a safe, ephemeral temp path (Cloud Run allows /tmp) ---
             safe_name = secure_filename(file.filename)
             _, ext = os.path.splitext(safe_name)
             if not ext:
-                ext = ".wav"  # default fallback
-
+                ext = ".wav"  
             tmp_path = None
             try:
                 with tempfile.NamedTemporaryFile(delete=False, suffix=ext, dir=tempfile.gettempdir()) as tmp:
                     file.save(tmp.name)
                     tmp_path = tmp.name
 
-                # --- analyze with librosa ---
                 y, sr = librosa.load(tmp_path, sr=None, mono=True)
                 onset_env = librosa.onset.onset_strength(y=y, sr=sr)
                 tempo = float(librosa.feature.tempo(onset_envelope=onset_env, sr=sr)[0])
@@ -267,7 +243,6 @@ def test_music():
                 data = json.loads(match.group(1))
 
             finally:
-                # --- ALWAYS remove the uploaded file after analysis ---
                 if tmp_path and os.path.exists(tmp_path):
                     try:
                         os.remove(tmp_path)
@@ -276,7 +251,6 @@ def test_music():
 
     return render_template("result.html", result=data or {})
 
-# ---------- Optional persistence APIs (unchanged) ----------
 @app.route('/api/update_last_played', methods=['POST'])
 def update_last_played():
     uid = current_uid()

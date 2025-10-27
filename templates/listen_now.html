@@ -5,12 +5,12 @@
      <link rel="icon" type="image/png" href="/static/images/logo.png">
   <title>Listen Now - NeuroHarmony</title>
 
-  <!-- Font Awesome -->
+ 
   <script src="https://kit.fontawesome.com/83eb50da7d.js" crossorigin="anonymous"></script>
-  <!-- Nunito Sans -->
+ 
   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
 
-  <!-- Firebase JSSDK -->
+ 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
     import {
@@ -27,7 +27,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Injected by Jinja. Empty string means "not logged in".
+
     const USER = {
       uid: "{{ session.get('uid','') }}",
       name: "{{ (user.first_name if user is defined and user and user.first_name else 'there')|e }}",
@@ -43,7 +43,7 @@
       --bg-grad: radial-gradient(1200px 600px at 10% -10%, #1e293b 0%, #0f172a 35%, #0b1222 100%);
       --card:#0b1222; --card2:#0e1628;
       --ink:#e5eefc; --muted:#93a4c1;
-      --brand:#70aeff; --brand2:white; /* song name color */
+      --brand:#70aeff; --brand2:white; 
       --accent:#1DB954; --danger:#e10600;
       --chip:#17233a; --shadow: 0 12px 40px rgba(2,8,23,.35);
     }
@@ -58,7 +58,7 @@
 
     .page{ margin:0 50px; padding:16px 100px 24px; }
 
-    /* user chip (only when logged in) */
+   
     .user-chip{
       display:flex; align-items:center; justify-content: end; gap:10px;
       background: rgba(255,255,255,.06); border-radius:14px;
@@ -70,7 +70,7 @@
       height:100px;
       border-radius:50%;
       object-fit:cover;
-      object-position: top center; /* show top of the image */
+      object-position: top center; 
     }
     .user-chip .hi{ font-weight:800; color:black }
     .user-chip .name{ color:black }
@@ -123,15 +123,15 @@
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
 
-    /* overlay + buttons */
+  
     .play-overlay{
       position:absolute; inset:0; display:grid; place-items:center;
       background: radial-gradient(300px 160px at 50% 60%, rgba(0,0,0,.0), rgba(0,0,0,.35));
       opacity:0; transition: opacity .22s ease;
-      pointer-events: none;            /* <— let clicks pass through */
+      pointer-events: none;          
     }
     .card:hover .play-overlay{ opacity:1 }
-    .play-overlay .play-btn{          /* <— only play button is clickable */
+    .play-overlay .play-btn{        
       pointer-events: auto;
       z-index: 2;
     }
@@ -150,12 +150,12 @@
       box-shadow: 0 6px 16px rgba(0,0,0,.28);
       opacity:0; transform: translateY(-6px);
       transition: opacity .22s ease, transform .22s ease, filter .2s ease;
-      z-index:3; /* <— above overlay */
+      z-index:3; 
     }
     .card:hover .add-fab{ opacity:1; transform: translateY(0) }
     .add-fab:hover{ filter: brightness(1.05) }
 
-    /* Player */
+  
     .player-bar{
       position:fixed; left:18px; right:18px; bottom:18px; z-index:20;
       border-radius:18px;
@@ -191,7 +191,6 @@
     }
     .extra-controls .active{ color: var(--accent) }
 
-    /* Dialog */
     #dialog-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; z-index:35 }
     #dialog-box{ background:#0d1526; color:#eaf2ff; padding:20px 20px; border-radius:12px; box-shadow: var(--shadow); display: flex; justify-content: center; flex-direction: column; align-items: center;}
     #dialog-box button{ margin-top:10px; padding:6px 12px; border:0; border-radius:8px; background: var(--brand2); color:white; cursor:pointer }
@@ -205,14 +204,14 @@
 
   <main class="page">
     {% if session.get('uid') %}
-      <!-- Greeting chip -->
+      
       <div class="user-chip reveal" aria-live="polite">
         <span class="hi">Hi,</span>
         <span class="name">{{ user.first_name }}</span>
         <img src="/static/images/{{ user.avatar }}.png" alt="Avatar">
       </div>
 
-      <!-- My Playlist rail (only when logged in) -->
+     
       <div class="section-head reveal">
         <div class="section-title"><i class="fa-solid fa-list-music"></i> <span>My Playlist</span></div>
         <button id="add-current-btn" class="add-fab" type="button" title="Add current song" style="position:static; opacity:1; transform:none;">
@@ -221,7 +220,7 @@
       </div>
       <section id="rail-playlist" class="rail reveal">
         <div id="myPlaylistStrip" class="strip" aria-live="polite">
-          <!-- Filled live from Firestore 'users/{uid}.playlist' (array of maps) -->
+       
         </div>
       </section>
     {% endif %}
@@ -329,7 +328,7 @@
     <audio id="audio"></audio>
   </div>
 
-  <!-- Dialog -->
+  
   <div id="dialog-overlay">
     <div id="dialog-box">
       <p id="dialog-msg"></p>
@@ -337,13 +336,13 @@
     </div>
   </div>
 
-  <!-- Logic -->
+ 
   <script type="module">
     import { onSnapshot, setDoc, updateDoc, arrayUnion, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
     const { db, USER, userDoc } = window._fire;
 
-    /* ---------- DOM refs ---------- */
+   
     const audio = document.getElementById('audio');
     const playBtn = document.getElementById('play-btn');
     const prevBtn = document.getElementById('prev-btn');
@@ -367,7 +366,7 @@
 
     let currentIndex = -1, isShuffled = false, isRepeating = false;
 
-    /* ---------- Helpers ---------- */
+    
     const fmt = t => isNaN(t) ? '0:00' : new Date(t*1000).toISOString().substr(14,5);
     const updateSeekGradient = (pct)=>{
       seekBar.style.background = `linear-gradient(to right, var(--brand2) ${pct}%, #1a2944 ${pct}%)`;
@@ -384,7 +383,7 @@
       box.animate([{transform:'scale(.96)'},{transform:'scale(1)'}], {duration:180, easing:'ease-out'});
     };
 
-    /* ---------- Load & Play ---------- */
+   
     function loadTrackByIndex(idx){
       if (idx<0) idx = playlistAll.length - 1;
       if (idx>=playlistAll.length) idx = 0;
@@ -406,7 +405,7 @@
       audio.play().then(()=> playBtn.innerHTML = '<i class="fas fa-pause"></i>');
     }
 
-    /* ---------- Controls ---------- */
+    
     playBtn.onclick = () => {
       if (!audio.src) { loadTrackByIndex(0); return; }
       if (audio.paused){ audio.play(); playBtn.innerHTML = '<i class="fas fa-pause"></i>'; }
@@ -436,7 +435,7 @@
     };
     audio.onended = () => { if (!audio.loop) nextBtn.click(); };
 
-    /* ---------- Add to Playlist (array of maps) ---------- */
+  
     async function addToPlaylist(track){
       if (!userDoc){ showDialog('Login required. Please log in to add songs to your playlist.'); return; }
       const t = {
@@ -449,7 +448,7 @@
       showDialog('Added to your playlist');
     }
 
-    // Card events (play + add) — make sure + doesn’t trigger play
+   
     cards.forEach((c, i)=>{
       const overlayPlay = c.querySelector('.play-btn');
       const addBtn = c.querySelector('.add-fab');
@@ -468,7 +467,7 @@
       });
     });
 
-    // Add current from header and footer (+) buttons (if present)
+    
     document.getElementById('add-current-btn')?.addEventListener('click', ()=>{
       if (currentIndex >= 0) addToPlaylist(playlistAll[currentIndex]);
       else showDialog('Play a song first, then add it to your playlist.');
@@ -478,13 +477,13 @@
       else showDialog('Play a song first, then add it to your playlist.');
     });
 
-    /* ---------- Live: last_played & playlist rail ---------- */
+   
     if (userDoc){
       onSnapshot(userDoc, snap=>{
         const d = snap.data() || {};
         if (d.last_played && !audio.src) loadTrackFromObject(d.last_played);
 
-        // Render My Playlist rail
+        
         const myStrip = document.getElementById('myPlaylistStrip');
         if (myStrip){
           const arr = Array.isArray(d.playlist) ? d.playlist : [];
@@ -520,7 +519,7 @@
       });
     }
 
-    /* ---------- Reveal on scroll ---------- */
+   
     const io = new IntersectionObserver((entries)=>{
       entries.forEach(entry=>{
         if (entry.isIntersecting){
