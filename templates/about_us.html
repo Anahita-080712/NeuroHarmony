@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+     <link rel="icon" type="image/png" href="/static/images/logo.png">
+  <title>About – NeuroHarmony</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/83eb50da7d.js" crossorigin="anonymous"></script>
+  <style>
+    :root{
+      --bg:#f9fafb;
+      --ink:#111827;
+      --muted:#4b5563;
+      --card:#ffffff;
+      --ring:#e5e7eb;
+      --brand:#447be9; /* accent */
+      --brand-soft:#eaf1ff;
+      --shadow:0 10px 28px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:var(--bg); color:var(--ink);
+      font-family:"Nunito Sans", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      overflow-x:hidden;
+    }
+    .page{max-width:1100px;margin:0 auto;padding:24px 20px 96px}
+
+    /* ---------- HERO ---------- */
+    .hero{
+      padding: 8px 0 18px;
+    }
+    .hero div{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    @media (max-width:900px){
+      .hero{grid-template-columns: 1fr}
+      .art{order:-1}
+    }
+    .eyebrow{
+      display:inline-flex; align-items:center; gap:8px;
+      font-size:.85rem; font-weight:800; letter-spacing:.3px; text-transform:uppercase;
+      color:#1f2937; opacity:.95;
+    }
+    .eyebrow i{ color:var(--brand) }
+
+    h1{
+      font-size: clamp(28px, 5vw, 44px);
+      line-height:1.1; margin:6px 0 10px; font-weight:900;
+      opacity:0; transform: translateY(8px);
+      animation: fadeUp .6s .05s ease forwards;
+    }
+    .lead{
+      color:var(--muted); max-width:56ch; line-height:1.7;
+      font-size: clamp(15px, 2.1vw, 18px);
+      opacity:0; transform: translateY(8px);
+      animation: fadeUp .6s .15s ease forwards;
+    }
+    /* underline sweep under H1 */
+    h1::after{
+      content:""; display:block; height:4px; margin-top:8px; border-radius:2px;
+      background: linear-gradient(90deg, var(--brand), transparent 70%);
+      transform-origin:left center; transform: scaleX(0);
+      animation: underline .7s .35s ease-out forwards;
+    }
+
+    /* ---------- ILLUSTRATION ---------- */
+    .art{
+      position:relative; isolation:isolate;
+      width:100%; aspect-ratio: 1.2 / 1; /* keeps size responsive */
+      filter: drop-shadow(0 10px 22px rgba(0,0,0,.08));
+      border-radius:18px; background: var(--card);
+      border:1px solid var(--ring);
+      overflow:hidden;
+    }
+    /* subtle gradient glow */
+    .art::before{
+      content:""; position:absolute; inset:-20%;
+      background: radial-gradient(600px 260px at 75% 10%, var(--brand-soft), transparent 60%),
+                  radial-gradient(480px 220px at 20% 90%, #f4f7ff, transparent 60%);
+      z-index:0; opacity:.9;
+      animation: glowFloat 10s ease-in-out infinite;
+    }
+    @keyframes glowFloat{
+      0%,100%{ transform: translateY(0) }
+      50%{ transform: translateY(-6px) }
+    }
+
+    /* SVG scales to box */
+    .art svg{ position:absolute; inset:0; width:100%; height:100%; z-index:1 }
+
+    /* floating notes around the art */
+    .note{
+      position:absolute; color:#000; opacity:.14; z-index:2;
+      animation: floatY 6s ease-in-out infinite;
+    }
+    .note:nth-child(1){ left:8%;  top:10%; font-size:18px; animation-delay:.2s }
+    .note:nth-child(2){ right:10%; top:14%; font-size:20px; animation-delay:.6s }
+    .note:nth-child(3){ left:6%;  bottom:10%; font-size:22px; animation-delay:.4s }
+    .note:nth-child(4){ right:8%; bottom:12%; font-size:18px; animation-delay:.8s }
+    @keyframes floatY{
+      0%,100%{ transform: translateY(0) }
+      50%{ transform: translateY(-10px) }
+    }
+
+    /* equalizer bars pulse */
+    .bar{ transform-origin: bottom center; }
+    .bar--1{ animation: pulse 1s -.2s ease-in-out infinite }
+    .bar--2{ animation: pulse 1.15s -.05s ease-in-out infinite }
+    .bar--3{ animation: pulse .95s -.35s ease-in-out infinite }
+    .bar--4{ animation: pulse 1.25s -.15s ease-in-out infinite }
+    .bar--5{ animation: pulse 1.05s -.3s ease-in-out infinite }
+    @keyframes pulse{
+      0%,100%{ transform: scaleY(.5) }
+      50%{ transform: scaleY(1) }
+    }
+
+    /* headphone strokes draw in on reveal */
+    .draw{
+      stroke-dasharray: 560;
+      stroke-dashoffset: 560;
+      animation: drawIn 1.1s .2s ease forwards;
+    }
+    @keyframes drawIn{
+      to{ stroke-dashoffset: 0 }
+    }
+
+    /* Parallax layers */
+    .p-layer{ will-change: transform; transition: transform .1s linear }
+
+    /* ---------- BODY CARD ---------- */
+    .card{
+      background:var(--card); border:1px solid var(--ring);
+      border-radius:16px; box-shadow:var(--shadow);
+      padding:18px 18px; margin-top:18px;
+      opacity:0; transform: translateY(10px);
+      animation: fadeUp .6s .2s ease forwards;
+    }
+    .card h2{ margin:0 0 10px; font-size:1.1rem }
+    .card p{ margin:0; color:var(--muted); line-height:1.8 }
+
+    /* ---------- CONTACT STRIP ---------- */
+    .contact{
+      margin-top:16px; display:flex; flex-wrap:wrap; gap:12px; align-items:center;
+      background:var(--card); border:1px solid var(--ring); border-radius:14px; box-shadow:var(--shadow);
+      padding:14px 16px;
+      opacity:0; transform: translateY(10px);
+      animation: fadeUp .6s .25s ease forwards;
+    }
+    .contact .label{ display:flex; align-items:center; gap:10px; font-weight:900 }
+    .contact .label i{ color:var(--brand) }
+    .email{
+      margin-left:auto; display:inline-flex; align-items:center; gap:10px;
+      padding:10px 14px; border-radius:10px; background:#111827; color:#fff; text-decoration:none;
+      font-weight:900; transition: transform .12s ease, filter .2s ease, box-shadow .2s ease;
+      box-shadow:0 8px 16px rgba(0,0,0,.18);
+    }
+    .email:hover{ transform: translateY(-1px); filter: brightness(1.04) }
+    .email i{ opacity:.9 }
+    @media (max-width:720px){ .email{ margin-left:0 } }
+
+    @keyframes fadeUp{
+      to{ opacity:1; transform: translateY(0) }
+    }
+  </style>
+</head>
+<body>
+  {% include 'navbar.html' %}
+
+  <main class="page">
+    <section class="hero" aria-label="About NeuroHarmony">
+      <div>
+        <h1 style="color: black; font-weight: 600;">NeuroHarmony</h1>
+         <img src="https://img.freepik.com/premium-vector/people-enjoy-music-man-woman-headphones-dancing-happy-teenagers-listen-songs-mobile-radio-music-podcast-cartoon-vector-concept-woman-man-group-listen-dancing-illustration_102902-4456.jpg">
+
+      </div>
+    </section>
+      
+   
+    <!-- Vision -->
+    <section class="card" aria-labelledby="vision">
+      <h2 id="vision">The Vision</h2>
+      <p>
+        The vision behind NeuroHarmony is making our daily habit of listening to music more intentional and purposeful
+        so that streaming our favourite tunes can bring us closer to achieving our goals and reaching our fullest
+        potentials. NeuroHarmony bridges the gap between music, AI and neuroscience, creating a science-backed method
+        to reap the full benefits music can offer.
+      </p>
+    </section>
+
+    <!-- Contact -->
+    <section class="contact" id="contact">
+      <div class="label"><i class="fa-solid fa-paper-plane"></i> Reach out to us</div>
+      <a class="email" href="mailto:anahitagupta080712@gmail.com">
+        <i class="fa-solid fa-envelope"></i> anahitagupta080712@gmail.com
+      </a>
+    </section>
+  </main>
+    {% include 'footer.html' %}
+
+  <script>
+    // Tiny parallax for the SVG layers (subtle)
+    const box = document.getElementById('parallax');
+    const layers = box.querySelectorAll('.p-layer');
+    let rect = null;
+
+    function updateRect(){ rect = box.getBoundingClientRect(); }
+    updateRect();
+    window.addEventListener('resize', updateRect);
+
+    box.addEventListener('mousemove', (e)=>{
+      const x = (e.clientX - rect.left) / rect.width - 0.5;  // -0.5 .. 0.5
+      const y = (e.clientY - rect.top)  / rect.height - 0.5;
+      layers.forEach(el=>{
+        const depth = Number(el.dataset.depth || 1);
+        // smaller factor keeps it tasteful
+        const dx = -x * depth * 6;
+        const dy = -y * depth * 6;
+        el.style.transform = `translate(${dx}px, ${dy}px)`;
+      });
+    });
+
+    box.addEventListener('mouseleave', ()=>{
+      layers.forEach(el=> el.style.transform = 'translate(0,0)');
+    });
+  </script>
+</body>
+</html>

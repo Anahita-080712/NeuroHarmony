@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+     <link rel="icon" type="image/png" href="/static/images/logo.png">
+  <title>Listen Now - NeuroHarmony</title>
+
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/83eb50da7d.js" crossorigin="anonymous"></script>
+  <!-- Nunito Sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+
+  <!-- Firebase JSSDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import {
+      getFirestore, doc, onSnapshot, setDoc, updateDoc, arrayUnion, getDoc
+    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCeWPxsqFUHeGVHy2Qelt-VP_GB3X0vAo",
+      authDomain: "eeg-music-minimalism.firebaseapp.com",
+      projectId: "eeg-music-minimalism",
+      storageBucket: "eeg-music-minimalism.firebasestorage.app",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Injected by Jinja. Empty string means "not logged in".
+    const USER = {
+      uid: "{{ session.get('uid','') }}",
+      name: "{{ (user.first_name if user is defined and user and user.first_name else 'there')|e }}",
+      avatar: "{{ (user.avatar_url if user is defined and user and user.avatar_url else '/static/images/default_avatar.png')|e }}"
+    };
+
+    window._fire = { db, USER, userDoc: USER.uid ? doc(db, 'users', USER.uid) : null };
+  </script>
+
+  <style>
+    :root{
+      --bg:#0f172a;
+      --bg-grad: radial-gradient(1200px 600px at 10% -10%, #1e293b 0%, #0f172a 35%, #0b1222 100%);
+      --card:#0b1222; --card2:#0e1628;
+      --ink:#e5eefc; --muted:#93a4c1;
+      --brand:#70aeff; --brand2:white; /* song name color */
+      --accent:#1DB954; --danger:#e10600;
+      --chip:#17233a; --shadow: 0 12px 40px rgba(2,8,23,.35);
+    }
+
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+    body{
+      margin:0; background:var(--bg-grad); color:var(--ink);
+      font-family:"Nunito Sans", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      overflow-x:hidden; padding-bottom:140px;
+    }
+
+    .page{ margin:0 50px; padding:16px 100px 24px; }
+
+    /* user chip (only when logged in) */
+    .user-chip{
+      display:flex; align-items:center; justify-content: end; gap:10px;
+      background: rgba(255,255,255,.06); border-radius:14px;
+      padding:6px 10px; width:100%; margin:14px 4px 6px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+    }
+    .user-chip img{
+      width:100px;
+      height:100px;
+      border-radius:50%;
+      object-fit:cover;
+      object-position: top center; /* show top of the image */
+    }
+    .user-chip .hi{ font-weight:800; color:black }
+    .user-chip .name{ color:black }
+
+    .section-head{
+      display:flex; align-items:center; justify-content:space-between;
+      margin: 22px 4px 12px;
+    }
+    .section-title{
+      font-size: 24px; display:flex; align-items:center; gap:10px;
+      color: black; font-weight: 700;
+    }
+    .section-title i{ color: var(--brand) }
+
+    .rail{
+      position:relative; overflow:hidden; border-radius:16px;
+      padding: 14px 6px 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
+    }
+    .page > section.rail:last-child{ padding-bottom:100px; }
+
+    .strip{
+      display:flex; gap:16px; padding: 4px 10px 8px;
+      overflow-x:auto; scroll-snap-type: x mandatory; scrollbar-width:none;
+    }
+    .strip::-webkit-scrollbar{ display:none }
+
+    .rail::before, .rail::after{
+      content:""; position:absolute; top:0; bottom:0; width:48px; pointer-events:none;
+      background: linear-gradient(to right, var(--bg-grad), transparent); z-index:2;
+    }
+    .rail::after{ right:0; transform: scaleX(-1) }
+    .rail::before{ left:0 }
+
+    .card{
+      position:relative; width: 210px; min-width:210px;
+      border-radius:16px; overflow:hidden;
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      scroll-snap-align:start; transform-style:preserve-3d;
+      transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+    }
+    .card:hover{
+      transform: translateY(-6px) perspective(600px) rotateX(1.2deg) rotateY(-1.2deg);
+      box-shadow: 0 16px 20px rgba(2,8,23,.5); filter: brightness(1.05);
+    }
+    .card img{ width:100%; height:210px; object-fit:cover; display:block; transform: translateZ(10px) }
+    .card h3{
+      margin:10px 10px 12px;
+      font-size: 1rem; color: var(--brand2);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+
+    /* overlay + buttons */
+    .play-overlay{
+      position:absolute; inset:0; display:grid; place-items:center;
+      background: radial-gradient(300px 160px at 50% 60%, rgba(0,0,0,.0), rgba(0,0,0,.35));
+      opacity:0; transition: opacity .22s ease;
+      pointer-events: none;            /* <— let clicks pass through */
+    }
+    .card:hover .play-overlay{ opacity:1 }
+    .play-overlay .play-btn{          /* <— only play button is clickable */
+      pointer-events: auto;
+      z-index: 2;
+    }
+    .play-btn{
+      width:54px;height:54px;border-radius:50%; display:grid;place-items:center;
+      color:#0b1222; background:#eaf2ff;
+      box-shadow: 0 10px 24px rgba(0,0,0,.4), inset 0 -4px 8px rgba(0,0,0,.12);
+      transform: translateZ(12px); transition: transform .15s ease; cursor:pointer;
+    }
+    .play-btn:hover{ transform: translateZ(12px) scale(1.05) }
+
+    .add-fab{
+      position:absolute; top:10px; right:10px;
+      width:34px; height:34px; border-radius:10px; border:0; cursor:pointer;
+      display:grid; place-items:center; background:#fff; color:#0b1222;
+      box-shadow: 0 6px 16px rgba(0,0,0,.28);
+      opacity:0; transform: translateY(-6px);
+      transition: opacity .22s ease, transform .22s ease, filter .2s ease;
+      z-index:3; /* <— above overlay */
+    }
+    .card:hover .add-fab{ opacity:1; transform: translateY(0) }
+    .add-fab:hover{ filter: brightness(1.05) }
+
+    /* Player */
+    .player-bar{
+      position:fixed; left:18px; right:18px; bottom:18px; z-index:20;
+      border-radius:18px;
+      background: linear-gradient(180deg, rgba(22,33,56,.86), rgba(14,23,40,.86));
+      box-shadow: var(--shadow), inset 0 0 0 1px rgba(255,255,255,.06);
+      backdrop-filter: blur(12px); color:#eaf2ff;
+    }
+    .player-progress-row{ position:relative; height:12px }
+    .player-progress{ position:absolute; left:16px; right:16px; top:-8px }
+    input[type=range]{ -webkit-appearance:none; width:100%; height:6px; background:#1a2944; border-radius:4px; outline:none }
+    input[type=range]::-webkit-slider-thumb{
+      -webkit-appearance:none; width:14px; height:14px; border-radius:50%;
+      background: var(--danger); box-shadow: 0 0 0 4px rgba(225,6,0,.15); cursor:pointer;
+    }
+    input[type=range]::-moz-range-thumb{ width:14px;height:14px;border-radius:50%; border:0; background:var(--danger) }
+    .player-controls-row{ display:flex; align-items:center; gap:16px; padding:14px 16px 16px }
+    .player-controls{ display:flex; align-items:center; gap:14px }
+    .player-controls button{
+      background:none;border:0;color:#eaf2ff; cursor:pointer; font-size:1.4rem; padding: 10px;
+      width:36px; height:36px; border-radius:10px; transition: background .2s ease, transform .1s ease, color .2s ease;
+    }
+    .player-controls button:hover{ background: rgba(255,255,255,.08) }
+    .player-controls button:active{ transform: scale(.96) }
+    .player-info{ flex:1; display:flex; align-items:center; gap:12px; justify-content:center; min-width:0 }
+    .player-info img{ width:42px;height:42px;border-radius:10px; object-fit:cover }
+    .player-meta{ min-width:0 }
+    .player-meta .title{ font-weight:800; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+    .player-meta .artist{ font-size:.86rem; color: var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+    .extra-controls{ display:flex; align-items:center; gap:10px; margin-left:auto; }
+    .extra-controls button{
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .extra-controls .active{ color: var(--accent) }
+
+    /* Dialog */
+    #dialog-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; z-index:35 }
+    #dialog-box{ background:#0d1526; color:#eaf2ff; padding:20px 20px; border-radius:12px; box-shadow: var(--shadow); display: flex; justify-content: center; flex-direction: column; align-items: center;}
+    #dialog-box button{ margin-top:10px; padding:6px 12px; border:0; border-radius:8px; background: var(--brand2); color:white; cursor:pointer }
+
+    .reveal{ opacity:0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease }
+    .reveal.in{ opacity:1; transform: translateY(0) }
+  </style>
+</head>
+<body>
+  {% include 'navbar.html' %}
+
+  <main class="page">
+    {% if session.get('uid') %}
+      <!-- Greeting chip -->
+      <div class="user-chip reveal" aria-live="polite">
+        <span class="hi">Hi,</span>
+        <span class="name">{{ user.first_name }}</span>
+        <img src="/static/images/{{ user.avatar }}.png" alt="Avatar">
+      </div>
+
+      <!-- My Playlist rail (only when logged in) -->
+      <div class="section-head reveal">
+        <div class="section-title"><i class="fa-solid fa-list-music"></i> <span>My Playlist</span></div>
+        <button id="add-current-btn" class="add-fab" type="button" title="Add current song" style="position:static; opacity:1; transform:none;">
+          <i class="fa-solid fa-plus"></i>
+        </button>
+      </div>
+      <section id="rail-playlist" class="rail reveal">
+        <div id="myPlaylistStrip" class="strip" aria-live="polite">
+          <!-- Filled live from Firestore 'users/{uid}.playlist' (array of maps) -->
+        </div>
+      </section>
+    {% endif %}
+
+    <!-- CALM -->
+    <div class="section-head reveal">
+      <div class="section-title"><i class="fa-solid fa-moon"></i> <span>Music to Calm</span></div>
+    </div>
+    <section id="rail-calm" class="rail reveal">
+      <div class="strip">
+        {% for song in songs_by_genre['calm'] %}
+          <article class="card"
+            data-index="{{ loop.index0 }}"
+            data-audio="{{ song.song_url }}"
+            data-title="{{ song.name }}"
+            data-artist="{{ song.get('artist','') }}"
+            data-art="{{ song.image_url }}"
+            role="button" tabindex="0" aria-label="Play {{ song.name }}">
+            <img src="{{ song.image_url }}" alt="">
+            <button class="add-fab" type="button" title="Add to playlist"><i class="fa-solid fa-plus"></i></button>
+            <div class="play-overlay"><div class="play-btn"><i class="fa-solid fa-play"></i></div></div>
+            <h3>{{ song.name }}</h3>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- BOOST -->
+    <div class="section-head reveal">
+      <div class="section-title"><i class="fa-solid fa-bolt"></i> <span>Music to Boost</span></div>
+    </div>
+    <section id="rail-boost" class="rail reveal">
+      <div class="strip">
+        {% for song in songs_by_genre['boost'] %}
+          <article class="card"
+            data-index="{{ loop.index0 + songs_by_genre['calm']|length }}"
+            data-audio="{{ song.song_url }}"
+            data-title="{{ song.name }}"
+            data-artist="{{ song.get('artist','') }}"
+            data-art="{{ song.image_url }}"
+            role="button" tabindex="0" aria-label="Play {{ song.name }}">
+            <img src="{{ song.image_url }}" alt="">
+            <button class="add-fab" type="button" title="Add to playlist"><i class="fa-solid fa-plus"></i></button>
+            <div class="play-overlay"><div class="play-btn"><i class="fa-solid fa-play"></i></div></div>
+            <h3>{{ song.name }}</h3>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- FOCUS -->
+    <div class="section-head reveal">
+      <div class="section-title"><i class="fa-solid fa-bullseye"></i> <span>Music to Focus</span></div>
+    </div>
+    <section id="rail-focus" class="rail reveal">
+      <div class="strip">
+        {% for song in songs_by_genre['focus'] %}
+          <article class="card"
+            data-index="{{ loop.index0 + songs_by_genre['calm']|length + songs_by_genre['boost']|length }}"
+            data-audio="{{ song.song_url }}"
+            data-title="{{ song.name }}"
+            data-artist="{{ song.get('artist','') }}"
+            data-art="{{ song.image_url }}"
+            role="button" tabindex="0" aria-label="Play {{ song.name }}">
+            <img src="{{ song.image_url }}" alt="">
+            <button class="add-fab" type="button" title="Add to playlist"><i class="fa-solid fa-plus"></i></button>
+            <div class="play-overlay"><div class="play-btn"><i class="fa-solid fa-play"></i></div></div>
+            <h3>{{ song.name }}</h3>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  </main>
+
+  <!-- Player -->
+  <div class="player-bar">
+    <div class="player-progress-row">
+      <div class="player-progress">
+        <input id="seek-bar" type="range" value="0" min="0" max="100" aria-label="Seek">
+      </div>
+    </div>
+    <div class="player-controls-row">
+      <div class="player-controls">
+        <button id="prev-btn" title="Previous"><i class="fas fa-backward"></i></button>
+        <button id="play-btn" title="Play/Pause"><i class="fas fa-play"></i></button>
+        <button id="next-btn" title="Next"><i class="fas fa-forward"></i></button>
+        <span class="player-time" id="time-display">0:00 / 0:00</span>
+      </div>
+
+      <div class="player-info">
+        <img id="player-art" alt="" src="data:image/png;base64,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">
+        <div class="player-meta">
+          <div id="player-title" class="title">Select a song</div>
+          <div id="player-sub" class="artist"></div>
+        </div>
+      </div>
+
+      <div class="extra-controls">
+        <button id="volume-btn" title="Mute/Unmute"><i class="fas fa-volume-up"></i></button>
+        <button id="repeat-btn" title="Repeat"><i class="fas fa-redo"></i></button>
+        <button id="shuffle-btn" title="Shuffle"><i class="fas fa-random"></i></button>
+        <button id="add-current-btn-footer" title="Add current to My Playlist"><i class="fa-solid fa-plus"></i></button>
+      </div>
+    </div>
+    <audio id="audio"></audio>
+  </div>
+
+  <!-- Dialog -->
+  <div id="dialog-overlay">
+    <div id="dialog-box">
+      <p id="dialog-msg"></p>
+      <button id="dialog-ok">OK</button>
+    </div>
+  </div>
+
+  <!-- Logic -->
+  <script type="module">
+    import { onSnapshot, setDoc, updateDoc, arrayUnion, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+    const { db, USER, userDoc } = window._fire;
+
+    /* ---------- DOM refs ---------- */
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('play-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const volumeBtn = document.getElementById('volume-btn');
+    const repeatBtn = document.getElementById('repeat-btn');
+    const shuffleBtn = document.getElementById('shuffle-btn');
+    const timeDisplay = document.getElementById('time-display');
+    const seekBar = document.getElementById('seek-bar');
+    const playerArt = document.getElementById('player-art');
+    const playerTitle = document.getElementById('player-title');
+    const playerSub = document.getElementById('player-sub');
+
+    const cards = Array.from(document.querySelectorAll('.card'));
+    const playlistAll = cards.map(c => ({
+      audio:  c.dataset.audio,
+      title:  c.dataset.title,
+      artist: c.dataset.artist,
+      art:    c.dataset.art
+    }));
+
+    let currentIndex = -1, isShuffled = false, isRepeating = false;
+
+    /* ---------- Helpers ---------- */
+    const fmt = t => isNaN(t) ? '0:00' : new Date(t*1000).toISOString().substr(14,5);
+    const updateSeekGradient = (pct)=>{
+      seekBar.style.background = `linear-gradient(to right, var(--brand2) ${pct}%, #1a2944 ${pct}%)`;
+    };
+    const setActiveCard = (idx)=> cards.forEach((c,i)=> c.classList.toggle('active', i===idx));
+    const showDialog = (msg)=>{
+      const overlay = document.getElementById('dialog-overlay');
+      const box = document.getElementById('dialog-box');
+      document.getElementById('dialog-msg').textContent = msg;
+      overlay.style.display = 'flex';
+      overlay.style.justifyContent = "center";
+      overlay.style.alignItems = "center";
+      document.getElementById('dialog-ok').onclick = ()=> overlay.style.display='none';
+      box.animate([{transform:'scale(.96)'},{transform:'scale(1)'}], {duration:180, easing:'ease-out'});
+    };
+
+    /* ---------- Load & Play ---------- */
+    function loadTrackByIndex(idx){
+      if (idx<0) idx = playlistAll.length - 1;
+      if (idx>=playlistAll.length) idx = 0;
+      currentIndex = idx;
+      const t = playlistAll[idx]; if (!t) return;
+      audio.src = t.audio; audio.loop = isRepeating;
+      playerArt.src = t.art; playerTitle.textContent = t.title; playerSub.textContent = t.artist || '';
+      setActiveCard(idx);
+      audio.play().then(()=> playBtn.innerHTML = '<i class="fas fa-pause"></i>').catch(()=> {
+        playBtn.innerHTML = '<i class="fas fa-play"></i>';
+      });
+      if (userDoc) setDoc(userDoc, { last_played: t }, { merge: true });
+    }
+    function loadTrackFromObject(t){
+      if (!t) return;
+      const idx = playlistAll.findIndex(x => x.audio === t.audio);
+      if (idx >= 0) { loadTrackByIndex(idx); return; }
+      audio.src = t.audio; playerArt.src = t.art || ''; playerTitle.textContent = t.title || 'Unknown'; playerSub.textContent = t.artist || '';
+      audio.play().then(()=> playBtn.innerHTML = '<i class="fas fa-pause"></i>');
+    }
+
+    /* ---------- Controls ---------- */
+    playBtn.onclick = () => {
+      if (!audio.src) { loadTrackByIndex(0); return; }
+      if (audio.paused){ audio.play(); playBtn.innerHTML = '<i class="fas fa-pause"></i>'; }
+      else { audio.pause(); playBtn.innerHTML = '<i class="fas fa-play"></i>'; }
+    };
+    prevBtn.onclick = () => loadTrackByIndex(currentIndex - 1);
+    nextBtn.onclick = () => loadTrackByIndex(isShuffled ? Math.floor(Math.random()*playlistAll.length) : currentIndex + 1);
+    volumeBtn.onclick = () => { audio.muted = !audio.muted; volumeBtn.innerHTML = audio.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>'; };
+    repeatBtn.onclick = () => { isRepeating = !isRepeating; audio.loop = isRepeating; repeatBtn.classList.toggle('active', isRepeating); };
+    shuffleBtn.onclick = () => { isShuffled = !isShuffled; shuffleBtn.classList.toggle('active', isShuffled); };
+
+    document.addEventListener('keydown', (e)=>{
+      const typing = /INPUT|TEXTAREA/.test(document.activeElement.tagName);
+      if (!typing && e.code === 'Space'){ e.preventDefault(); playBtn.click(); }
+      if (!typing && e.code === 'ArrowRight'){ nextBtn.click(); }
+      if (!typing && e.code === 'ArrowLeft'){ prevBtn.click(); }
+    });
+
+    audio.ontimeupdate = () => {
+      const c = audio.currentTime, d = audio.duration;
+      timeDisplay.textContent = `${fmt(c)} / ${fmt(d)}`;
+      const pct = isNaN(d) ? 0 : (c/d)*100;
+      seekBar.value = pct; updateSeekGradient(pct);
+    };
+    seekBar.oninput = () => {
+      const d = audio.duration; if (!isNaN(d)){ audio.currentTime = (seekBar.value/100)*d; updateSeekGradient(seekBar.value); }
+    };
+    audio.onended = () => { if (!audio.loop) nextBtn.click(); };
+
+    /* ---------- Add to Playlist (array of maps) ---------- */
+    async function addToPlaylist(track){
+      if (!userDoc){ showDialog('Login required. Please log in to add songs to your playlist.'); return; }
+      const t = {
+        audio: track.audio || '',
+        title: track.title || '',
+        artist: track.artist || '',
+        art: track.art || ''
+      };
+      await setDoc(userDoc, { playlist: arrayUnion(t) }, { merge:true });
+      showDialog('Added to your playlist');
+    }
+
+    // Card events (play + add) — make sure + doesn’t trigger play
+    cards.forEach((c, i)=>{
+      const overlayPlay = c.querySelector('.play-btn');
+      const addBtn = c.querySelector('.add-fab');
+
+      c.addEventListener('click', (e)=>{
+        if (!e.target.closest('.add-fab')) loadTrackByIndex(i);
+      });
+      c.addEventListener('keydown', (e)=>{
+        if (e.key==='Enter' || e.key===' '){ e.preventDefault(); loadTrackByIndex(i); }
+      });
+      overlayPlay?.addEventListener('click', (e)=>{ e.stopPropagation(); loadTrackByIndex(i); });
+
+      addBtn?.addEventListener('click', (e)=>{
+        e.stopPropagation();               // prevent card click
+        addToPlaylist(playlistAll[i]);
+      });
+    });
+
+    // Add current from header and footer (+) buttons (if present)
+    document.getElementById('add-current-btn')?.addEventListener('click', ()=>{
+      if (currentIndex >= 0) addToPlaylist(playlistAll[currentIndex]);
+      else showDialog('Play a song first, then add it to your playlist.');
+    });
+    document.getElementById('add-current-btn-footer')?.addEventListener('click', ()=>{
+      if (currentIndex >= 0) addToPlaylist(playlistAll[currentIndex]);
+      else showDialog('Play a song first, then add it to your playlist.');
+    });
+
+    /* ---------- Live: last_played & playlist rail ---------- */
+    if (userDoc){
+      onSnapshot(userDoc, snap=>{
+        const d = snap.data() || {};
+        if (d.last_played && !audio.src) loadTrackFromObject(d.last_played);
+
+        // Render My Playlist rail
+        const myStrip = document.getElementById('myPlaylistStrip');
+        if (myStrip){
+          const arr = Array.isArray(d.playlist) ? d.playlist : [];
+          myStrip.innerHTML = '';
+          if (!arr.length){
+            const empty = document.createElement('div');
+            empty.style.opacity = '.8';
+            empty.style.padding = '10px';
+            empty.textContent = 'Your playlist is empty. Add songs using the + button.';
+            myStrip.appendChild(empty);
+          } else {
+            arr.forEach((t)=>{
+              const a = document.createElement('article');
+              a.className = 'card';
+              a.setAttribute('role','button');
+              a.setAttribute('tabindex','0');
+              a.setAttribute('aria-label', `Play ${t.title || 'track'}`);
+              a.innerHTML = `
+                <img src="${t.art || ''}" alt="">
+                <div class="play-overlay"><div class="play-btn"><i class="fa-solid fa-play"></i></div></div>
+                <h3 title="${t.title || ''}">${t.title || ''}</h3>
+              `;
+              a.addEventListener('click', ()=>{
+                const idxInAll = playlistAll.findIndex(x => x.audio === t.audio);
+                if (idxInAll >= 0) loadTrackByIndex(idxInAll);
+                else loadTrackFromObject(t);
+              });
+              a.addEventListener('keydown', (e)=>{ if (e.key==='Enter' || e.key===' '){ e.preventDefault(); a.click(); }});
+              myStrip.appendChild(a);
+            });
+          }
+        }
+      });
+    }
+
+    /* ---------- Reveal on scroll ---------- */
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if (entry.isIntersecting){
+          entry.target.classList.add('in');
+          if (entry.target.classList.contains('rail')){
+            const items = entry.target.querySelectorAll('.card');
+            items.forEach((el, idx)=>{
+              el.animate(
+                [{opacity:0, transform:'translateY(10px)'},{opacity:1, transform:'translateY(0)'}],
+                {duration:380, delay: idx*40, easing:'cubic-bezier(.2,.7,.2,1)', fill:'both'}
+              );
+            });
+          }
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold:.2 });
+    document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+
+    updateSeekGradient(0);
+  </script>
+</body>
+</html>

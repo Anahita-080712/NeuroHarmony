@@ -1,0 +1,777 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+     <link rel="icon" type="image/png" href="/static/images/logo.png">
+  <title>NeuroHarmony</title>
+  <script src="https://kit.fontawesome.com/83eb50da7d.js" crossorigin="anonymous"></script>
+  <!-- GSAP core + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=music_note" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+  <style>
+    * { 
+      margin: 0; 
+      font-family: "Nunito Sans", sans-serif; 
+      box-sizing: border-box;
+    }
+    body { 
+      background: #f9fafb; 
+      overflow-x: hidden; 
+    }
+
+    .section1 {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      padding: 50px 0;
+      height: auto;
+    }
+    .section1 .motto {
+      width: 50%; 
+      padding: 5%;
+      display: flex; 
+      flex-direction: column;
+      justify-content: center; 
+      align-items: center;
+    }
+    .motto p {
+      font-size: 20px; 
+      text-align: center;
+    }
+    .img_ {
+      width: 50%; 
+      display: flex;
+      justify-content: center; 
+      align-items: center;
+    }
+    .img_ video {
+      width: 100%; 
+      height: auto;
+      margin-right: 30px;
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.12);
+    }
+
+    /* ——— floating notes ——— */
+    .note {
+      position: absolute;
+      font-size: 1.5rem;
+      color: rgba(0,0,0,0.2);
+      animation: floatUp 4s ease-in infinite;
+      pointer-events: none;
+    }
+    /* staggered delays and positions */
+    .note:nth-child(1) { left: 10%;  bottom: 20%; animation-delay: 0s; }
+    .note:nth-child(2) { left: 30%;  top: 25%;  animation-delay: 1s; }
+    .note:nth-child(3) { left: 23%;  top: 35%; animation-delay: 0.5s; }
+    .note:nth-child(4) { left: 2%;   bottom: 34%; animation-delay: 1.5s; }
+    .note:nth-child(5) { left: 45%;  bottom: 42%; animation-delay: 0.8s; }
+    .note:nth-child(6) { left: 30%;  bottom: 32%; animation-delay: 0.6s; }
+
+    @keyframes floatUp {
+      0%   { transform: translateY(0) scale(1); opacity: 1; }
+      50%  { opacity: 0.6; }
+      100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
+    }
+
+    /* mission section */
+    .mission {
+      background: linear-gradient(-45deg,
+        #3e75eb, #447be9, #70aeff, #70aeff, #5792f1, #447be9, #3e75eb);
+      width: 100%;
+      padding: 70px 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+      overflow: hidden;
+    }
+    .mission p {
+      font-size: 20px; 
+      text-align: center;
+      color: #fff;
+      max-width: 800px;
+      line-height: 1.6;
+    }
+
+    /* mission cards */
+    .mission-cards {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .mission-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: 240px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      opacity: 0;             /* reveal on scroll */
+      transform: translateY(20px);
+    }
+    .mission-card .icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #3e75eb;
+    }
+    .mission-card.calm .icon { color: #3b5bdb; }
+    .mission-card.boost .icon { color: #20c997; }
+    .mission-card.focus .icon { color: #8c61ff; }
+    .mission-card h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.125rem;
+    }
+    .mission-card p {
+      font-size: 0.875rem;
+      color: #555;
+      line-height: 1.4;
+    }
+
+    section { padding: 4rem 2rem; }
+    section h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #1f2937;
+      opacity: 0;                 /* reveal on scroll */
+      transform: translateY(12px);
+    }
+
+    .cards {
+      display: grid;
+      gap: 1.5rem;
+      justify-items: center;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      width: 280px;
+      /* remove old load animation; reveal via GSAP on scroll */
+      opacity: 0;
+      transform: translateY(20px);
+      animation: none !important;
+    }
+
+    /* How It Works layout */
+    .wiw-cards {
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .wiw-cards .card{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .card .icon { 
+      font-size: 2rem;
+      color: #4c6ef5;
+      margin-bottom: 0.75rem;
+    }
+
+    .card h3 {
+      font-size: 1.125rem;
+      margin: 0.5rem 0;
+      color: #1f2937;
+    }
+    .card p {
+      font-size: 0.9rem;
+      color: #4b5563;
+      line-height: 1.4;
+      margin: 0;
+      text-align: center;
+    }
+
+    .model-created{
+      width: 100%;
+      background: linear-gradient(-45deg,
+        #3e75eb, #447be9, #70aeff, #70aeff, #5792f1, #447be9, #3e75eb);
+      overflow: hidden;
+      color: white;
+    }
+    .model-created h2{
+      color: white;
+    }
+
+    .why-neuroharmony {
+      width: 100%;
+      padding: 4rem 1rem;
+      text-align: center;
+      background: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .why-neuroharmony .features { 
+      display: flex; flex-direction: column; justify-content: center; align-items: center; align-items: start;
+      max-width: 80%; margin: 0 auto;
+    }
+    .features .row{
+      display: flex; justify-content: center; align-items: center; gap: 2rem; flex-wrap: wrap;
+    }
+    .feature{
+      width: 500px; max-width: 90vw;
+      min-height: 200px;
+      opacity: 0;                 /* reveal on scroll */
+      transform: translateY(18px);
+    }
+    .feature h3 { margin: 0.75rem 0 0.5rem; font-size: 1.125rem; color: #111827; }
+    .feature p { margin: 0; font-size: 0.9rem; color: #4b5563; line-height: 1.4; }
+    .feature i{ color: rgb(89, 101, 120); }
+
+    .icon-circle {
+      width: 64px; height: 64px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 0.75rem; font-size: 1.5rem; color: white;
+      transform: scale(.95); opacity: .85;
+    }
+    .pastel-blue { background: #d0e7ff; }
+    .pastel-green { background: #d8fde4; }
+    .pastel-purple { background: #f3defd; }
+    .pastel-orange { background: #ffe5d0; }
+
+    /* ===== Wave Timeline (unchanged styles) ===== */
+    :root{
+      --bg:#f6efe9;
+      --green:#46c2a1; --teal:#37c0d1; --purple:#6a64d8; --pink:#e16aa2; --orange:#e88c63;
+      --muted:#6f7982; --shadow:0 10px 30px rgba(0,0,0,.10);
+      --arrow:rgb(60, 59, 59);
+      --arrow-gap:10px;             /* tip-to-bubble gap */
+      --title:#0f1b2b;
+      --marks-top-extend:64px;      /* extra headroom above stage for long, equal arrows */
+    }
+
+    .wrap{max-width:1100px;margin:auto;padding:28px 16px 56px}
+    h1{font-size:clamp(24px,4vw,40px);text-align:center;margin:4px 0 18px}
+
+    .stage{position:relative;padding:20px; }
+    .svgholder{position:relative;width:100%;height:300px}
+    @media (max-width:640px){ .svgholder{height:360px} }
+
+    /* Wave */
+    svg{position:absolute;inset:0}
+    .seg{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:32;filter:drop-shadow(var(--shadow))}
+
+    /* Layers */
+    .bubbles{position:absolute;inset:0;pointer-events:none}
+    .marks, .tips{
+      position:absolute; left:0; right:0; bottom:0;
+      top: calc(-1 * var(--marks-top-extend));
+      pointer-events:none;
+      color: white;
+    }
+
+    /* Bubbles */
+    .bubble{
+      position:absolute;width:76px;height:76px;border-radius:50%;
+      display:grid;place-items:center;
+      background:radial-gradient(circle at 35% 30%,#fff,#f3f5f9);
+      box-shadow:0 10px 22px rgba(15,23,42,.10),0 0 0 6px rgba(0,0,0,.02) inset;
+      transform:translate(-50%,-50%);opacity:0;will-change:transform;
+      pointer-events:auto; cursor:pointer;
+    }
+    .icon-image{width:40px;height:40px}
+    @media (max-width:560px){ .bubble{width:64px;height:64px}.icon-image{width:32px;height:32px} }
+
+    .mark{position:absolute;left:0;transform:translateX(-50%);display:flex;align-items:center;pointer-events:auto}
+    .mark--top{flex-direction:column}
+    .mark--bottom{flex-direction:column-reverse}
+
+    .title{
+      color:var(--title);font-weight:700;text-align:center;opacity:0;
+      font-size:clamp(14px,2.4vw,18px);
+      padding:8px 6px; width:200px; max-width:42vw; cursor:pointer;
+      color: white;
+    }
+
+    /* Equal-length arrows */
+    .mark-arrow--down,
+    .mark-arrow--up{
+      position:relative;width:0;border-left:2px solid var(--arrow);
+      opacity:0;
+    }
+    .mark--top    .mark-arrow--down{ transform-origin:top center;    transform:scaleY(0); margin-top:6px; }
+    .mark--bottom .mark-arrow--up{   transform-origin:bottom center; transform:scaleY(0); margin-bottom:6px; }
+
+    .mark-arrow--down::after{
+      content:"";position:absolute;left:-6px;bottom:-6px;width:0;height:0;
+      border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid var(--arrow);
+    }
+    .mark-arrow--up::before{
+      content:"";position:absolute;left:-6px;top:-6px;width:0;height:0;
+      border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:6px solid var(--arrow);
+    }
+
+    /* Tooltips */
+    .tips .tip{
+      position:absolute; transform:translate(-50%,-100%); min-width:220px; max-width:280px;
+      padding:20px 20px; border-radius:10px; background:#ffffff; color:#2a2a2a; box-shadow:0 12px 30px rgba(0,0,0,.15);
+      opacity:0; pointer-events:none; transition:opacity .18s ease; font-size:14px; line-height:1.35;
+    }
+    .tip::after{ content:""; position:absolute; left:50%; translate:-50% 0; bottom:-8px;
+      border-left:8px solid transparent; border-right:8px solid transparent; border-top:8px solid #fff; }
+    .tip.tip--below{ transform:translate(-50%,8px); }
+    .tip.tip--below::after{ top:-8px; bottom:auto; border-top:none; border-bottom:8px solid #fff; }
+    .tip.show{ opacity:1; }
+
+    /* ===== Grooving hover for mission cards ===== */
+.mission-card{
+  transition: box-shadow .25s ease, transform .25s ease;
+  will-change: transform, box-shadow;
+  transform-origin: 50% 100%;
+}
+
+/* Groove on hover / tap */
+.mission-card:hover,
+.mission-card:active {
+  animation: nh-groove 1.15s ease-in-out infinite;
+  box-shadow: 0 10px 24px rgba(0,0,0,.12), 0 4px 10px rgba(0,0,0,.06);
+}
+
+/* Make the icon bop slightly while the card grooves */
+.mission-card:hover .icon,
+.mission-card:active .icon{
+  animation: nh-bop .8s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Optional: subtle glow that pulses with the groove */
+.mission-card:hover::after,
+.mission-card:active::after{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius:14px;
+  box-shadow: 0 0 0 0 rgba(62,117,235,.25);
+  animation: nh-glow 1.15s ease-in-out infinite;
+  pointer-events:none;
+}
+
+/* Keyframes */
+@keyframes nh-groove{
+  0%   { transform: translateY(0) rotate(0deg) scale(1); }
+  20%  { transform: translateY(-4px) rotate(-1.2deg) scale(1.01); }
+  40%  { transform: translateY(0) rotate(1.2deg)  scale(1.015); }
+  60%  { transform: translateY(-3px) rotate(0deg)  scale(1.01); }
+  80%  { transform: translateY(0) rotate(-0.8deg) scale(1.008); }
+  100% { transform: translateY(0) rotate(0deg)     scale(1); }
+}
+
+@keyframes nh-bop{
+  0%   { transform: translateY(0) rotate(0deg) }
+  50%  { transform: translateY(-5px) rotate(-4deg) }
+  100% { transform: translateY(0) rotate(0deg) }
+}
+
+@keyframes nh-glow{
+  0%,100% { box-shadow: 0 0 0 0 rgba(62,117,235,.0); }
+  50%     { box-shadow: 0 0 0 8px rgba(62,117,235,.10); }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .mission-card:hover,
+  .mission-card:active,
+  .mission-card:hover .icon,
+  .mission-card:active .icon{
+    animation: none !important;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <div class="main_container">
+    {% include 'navbar.html' %}
+
+    <!-- ====== HERO ====== -->
+    <div class="section1">
+      <div class="motto">
+        <span class="material-symbols-outlined note">music_note</span>
+        <span class="material-symbols-outlined note">music_note</span>
+        <span class="material-symbols-outlined note">music_note</span>
+        <i class="fa-solid fa-music note"></i>
+        <i class="fa-solid fa-music note"></i>
+        <i class="fa-solid fa-music note"></i>
+
+        <p style="color: black;">
+          <span style="font-size:30px; font-weight:700;color:black">NEUROHARMONY</span><br><br>
+          AI powered music therapy to transform your life<br>
+          Curated music to help you reach your fullest potential<br>
+          Science backed music recommendations based on your needs
+        </p>
+      </div>
+      <div class="img_">
+        <video loop autoplay muted playsinline>
+          <source src="/static/videos/Animated_Music_Enjoyment_GIF.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
+    <!-- ====== MISSION ====== -->
+    <div class="mission">
+      <p>
+        <span style="font-size:30px; font-weight:700;">OUR MISSION</span><br><br>
+        We believe in the power of music to transform your state of mind, elevate your mood and turn any bad day into a great one.
+        <br>We aspire to harness the full power of music therapy to change lives for the better.
+      </p>
+
+      <div class="mission-cards">
+        <div class="mission-card calm">
+          <div class="icon"><img src="/static/images/c.png" width="150" alt=""></div>
+          <h3>Calm</h3>
+          <p>Immerse yourself in gentle soundscapes designed to reduce stress and soothe anxiety.</p>
+        </div>
+        <div class="mission-card boost">
+          <div class="icon"><img src="/static/images/b.png" width="150" style="padding-bottom: 10px;" alt=""></div>
+          <h3>Pep Your Step</h3>
+          <p>Feel energized by upbeat rhythms and uplifting melodies that spark positivity.</p>
+        </div>
+        <div class="mission-card focus">
+          <div class="icon"><img src="/static/images/f.png" width="150" alt=""></div>
+          <h3>Focus</h3>
+          <p>Dive deep into work or study with neutral, steady beats that sharpen concentration.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== HOW IT WORKS ====== -->
+    <section class="how-it-works">
+      <h2>How It Works</h2>
+      <br><br>
+      <div class="cards wiw-cards">
+        <div class="card">
+          <div class="icon"><i class="fa-solid fa-brain"></i></div>
+          <h3>EEG Data Analysis</h3>
+          <p>We analyze EEG patterns to see how your brain reacts to different musical elements.</p>
+        </div>
+        <div class="card">
+          <div class="icon"><i class="fa-solid fa-gauge-high"></i></div>
+          <h3>Feature Extraction</h3>
+          <p>Key audio features (tempo, energy, spectral content) are pulled out and quantified.</p>
+        </div>
+        <div class="card">
+          <div class="icon"><i class="fa-solid fa-music"></i></div>
+          <h3>Music Curation</h3>
+          <p>Our AI groups tracks into calming, energizing, or focus playlists tailored for you.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== How the Model Was Created (Wave Timeline) ===== -->
+    <section class="model-created">
+      <h2>How the Model Was Created</h2>
+      <br><br><br><br><br>
+      <div class="stage">
+        <div class="svgholder">
+          <!-- Wave -->
+          <svg viewBox="0 0 1100 240" preserveAspectRatio="none" aria-hidden="true">
+            <path id="seg1" class="seg" stroke="var(--green)" d="M80 120 A90 90 0 0 1 260 120" />
+            <path id="seg2" class="seg" stroke="var(--teal)"  d="M260 120 A90 90 0 0 0 440 120" />
+            <path id="seg3" class="seg" stroke="var(--purple)" d="M440 120 A90 90 0 0 1 620 120" />
+            <path id="seg4" class="seg" stroke="var(--pink)"   d="M620 120 A90 90 0 0 0 800 120" />
+            <path id="seg5" class="seg" stroke="var(--orange)" d="M800 120 A90 90 0 0 1 980 120" />
+          </svg>
+
+          <!-- Bubbles -->
+          <div class="bubbles">
+            <div class="bubble" data-for="seg1" tabindex="0" aria-label="EEG Data Research"><img class="icon-image" src="/static/images/data-research.png"   alt="" /></div>
+            <div class="bubble" data-for="seg2" tabindex="0" aria-label="Benefit Analysis"><img class="icon-image" src="/static/images/analysis.png"         alt="" /></div>
+            <div class="bubble" data-for="seg3" tabindex="0" aria-label="Feature Correlation"><img class="icon-image" src="/static/images/correlation.png"    alt="" /></div>
+            <div class="bubble" data-for="seg4" tabindex="0" aria-label="Track Classification"><img class="icon-image" src="/static/images/data-classification.png" alt="" /></div>
+            <div class="bubble" data-for="seg5" tabindex="0" aria-label="Model Development"><img class="icon-image" src="/static/images/algorithm.png"        alt="" /></div>
+          </div>
+
+          <!-- Titles + arrows -->
+          <div class="marks"></div>
+
+          <!-- Tooltips -->
+          <div class="tips"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== WHY ===== -->
+    <section class="why-neuroharmony">
+      <h2>Why Choose NeuroHarmony?</h2>
+      <br><br>
+      <div class="features">
+        <div class="row">
+          <div class="feature">
+            <div class="icon-circle pastel-blue">
+              <i class="fa-solid fa-music"></i>
+            </div>
+            <h3>Curated Playlists</h3>
+            <p>Guaranteed to calm, pep your step, or <br>induce a focused “flow” state.</p>
+          </div>
+          <div class="feature">
+            <div class="icon-circle pastel-green">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <h3>Track Analysis</h3>
+            <p>Test your music’s therapeutic potential.</p>
+          </div>
+        </div>
+
+        <div style="height: 30px; width: 80%;"></div>
+
+        <div class="row">
+          <div class="feature">
+            <div class="icon-circle pastel-purple">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <h3>Personalized Playlists</h3>
+            <p>AI-generated playlists for <br>every mood and goal.</p>
+          </div>
+          <div class="feature">
+            <div class="icon-circle pastel-orange">
+              <i class="fa-solid fa-play"></i>
+            </div>
+            <h3>Science-Backed Approach</h3>
+            <p>Evidence-driven music therapy <br>recommendations.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+     {% include 'footer.html' %}
+
+  </div>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script>
+    window.addEventListener('load', () => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      /* ========= Wave timeline code (unchanged except we pause & trigger on scroll) ========= */
+      const segs  = ['seg1','seg2','seg3','seg4','seg5'].map(id => document.getElementById(id));
+      const stage = document.querySelector('.svgholder');
+      const marksHost = document.querySelector('.marks');
+      const tipsHost  = document.querySelector('.tips');
+
+      const VIEW_W = 1100, VIEW_H = 240;
+      const BASEY = 120, R = 90, STROKE = 32;
+      const STARTS = [80,260,440,620,800];
+      const DIR     = ['up','down','up','down','up'];
+      const LABELPOS= ['bottom','top','bottom','top','bottom'];
+
+      // Per-bubble vertical tweaks (+ = move UP). 2 & 4 lifted strongly.
+      const BUBBLE_TWEAKS_PX = [-30, 70, -30, 70, -30];
+
+      const STEPS = [
+        { title: 'EEG Data Research',   desc: 'Trained on hundreds of EEG sessions to link brainwaves with musical stimuli.' },
+        { title: 'Benefit Analysis',    desc: 'Identified three core effects—calming, boosting, focusing—via surveys and labs.' },
+        { title: 'Feature Correlation', desc: 'Mapped audio features to observed mood shifts in the EEG data.' },
+        { title: 'Track Classification',desc: 'Built a labeled library of songs by therapeutic effect for robust model training.' },
+        { title: 'Model Development',   desc: 'Finalized an AI that predicts a song’s mood impact and explains its audio drivers.' }
+      ];
+
+      function layout(){
+        const rect = stage.getBoundingClientRect();
+        const anyBubble = document.querySelector('.bubble');
+        const bubblePx = anyBubble ? anyBubble.getBoundingClientRect().width : 76;
+
+        const bubbleV = bubblePx / rect.height * VIEW_H;
+        const GAP_V = (rect.width < 560 ? 6 : 8) / rect.height * VIEW_H;
+        const OFFSET = (R - STROKE/2) - (bubbleV/2) - GAP_V;
+
+        // Place bubbles
+        document.querySelectorAll('.bubble').forEach((b,i)=>{
+          const cx = STARTS[i] + R;
+          let cy = BASEY + (DIR[i]==='up' ? -OFFSET : OFFSET);
+          const tweakV = (BUBBLE_TWEAKS_PX[i] || 0) / rect.height * VIEW_H;
+          cy -= tweakV;
+          b.style.left = (cx/VIEW_W*100)+'%';
+          b.style.top  = (cy/VIEW_H*100)+'%';
+        });
+
+        // Rebuild marks + tooltips
+        marksHost.innerHTML = '';
+        tipsHost.innerHTML  = '';
+
+        const FIXED_ARROW_PX = Math.round(rect.height * 0.35);
+        const TRI = 6;  const GAP = 10;
+        const extendPx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--marks-top-extend')) || 64;
+        const marksTopAbs = rect.top - extendPx;
+
+        STEPS.forEach((step,i)=>{
+          const pos = LABELPOS[i];
+          const cx = STARTS[i] + R;
+          let cy = BASEY + (DIR[i]==='up' ? -OFFSET : OFFSET);
+          const tweakV = (BUBBLE_TWEAKS_PX[i] || 0) / rect.height * VIEW_H;
+          cy -= tweakV;
+
+          const cxPct = (cx/VIEW_W*100);
+          const bubbleCenterPx = rect.top + (cy/VIEW_H)*rect.height;
+          const bubbleRadiusPx = bubblePx/2;
+
+          const mark = document.createElement('div');
+          mark.className = 'mark ' + (pos==='top' ? 'mark--top' : 'mark--bottom');
+          mark.style.left = cxPct + '%';
+
+          const title = document.createElement('div');
+          title.className = 'title';
+          title.textContent = step.title;
+          title.setAttribute('role','button');
+          title.setAttribute('tabindex','0');
+
+          const arrow = document.createElement('div');
+          arrow.className = (pos==='top') ? 'mark-arrow--down' : 'mark-arrow--up';
+          arrow.style.height = (FIXED_ARROW_PX - TRI) + 'px';
+
+          mark.appendChild(title);
+          mark.appendChild(arrow);
+          marksHost.appendChild(mark);
+
+          const tRect = title.getBoundingClientRect();
+          const titleH = tRect.height;
+
+          let markTopPx;
+          if (pos === 'top') {
+            const bubbleTopPx = bubbleCenterPx - bubbleRadiusPx - GAP;
+            const labelTopAbs = bubbleTopPx - TRI - FIXED_ARROW_PX - titleH;
+            markTopPx = labelTopAbs - marksTopAbs;
+          } else {
+            const bubbleBottomPx = bubbleCenterPx + bubbleRadiusPx + GAP;
+            const arrowTopAbs = bubbleBottomPx + TRI - FIXED_ARROW_PX + 37;
+            const labelTopAbs = arrowTopAbs + FIXED_ARROW_PX;
+            markTopPx = labelTopAbs - marksTopAbs - titleH;
+          }
+          mark.style.top = markTopPx + 'px';
+
+          const tip = document.createElement('div');
+          tip.className = 'tip ' + (pos==='top' ? '' : 'tip--below');
+          tip.textContent = step.desc;
+          tip.style.left = cxPct + '%';
+          tip.style.top  = ( (cy/VIEW_H*100) + (pos==='top' ? -16 : 30) ) + '%';
+          tipsHost.appendChild(tip);
+
+          const bubble = document.querySelectorAll('.bubble')[i];
+          const toggle = (show) => {
+            tipsHost.querySelectorAll('.tip').forEach(el => el.classList.remove('show'));
+            if (show) tip.classList.add('show');
+          };
+          bubble.addEventListener('mouseenter', ()=>toggle(true));
+          bubble.addEventListener('mouseleave', ()=>toggle(false));
+          title.addEventListener('mouseenter', ()=>toggle(true));
+          title.addEventListener('mouseleave', ()=>toggle(false));
+          bubble.addEventListener('focus', ()=>toggle(true));
+          bubble.addEventListener('blur',  ()=>toggle(false));
+          title.addEventListener('focus', ()=>toggle(true));
+          title.addEventListener('blur',  ()=>toggle(false));
+          const clickOpen = (e)=>{ e.stopPropagation(); toggle(!tip.classList.contains('show')); };
+          bubble.addEventListener('click', clickOpen);
+          title.addEventListener('click',  clickOpen);
+          document.addEventListener('click', ()=>toggle(false));
+          document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') toggle(false); });
+        });
+      }
+
+      // Prep wave draw
+      segs.forEach(p=>{
+        const len=p.getTotalLength();
+        p.style.strokeDasharray=len;
+        p.style.strokeDashoffset=len;
+      });
+
+      const waveTL = gsap.timeline({ defaults:{ ease:'power2.out' } });
+      segs.forEach((p,i)=>{
+        const id = p.getAttribute('id');
+        waveTL.to(p,{ strokeDashoffset:0, duration:0.85 }, ">");
+        waveTL.to(`.bubble[data-for="${id}"]`,{ opacity:1, duration:0.25 }, "<+0.25");
+        waveTL.add(()=>{
+          const mark = document.querySelectorAll('.mark')[i];
+          if(!mark) return;
+          const arrow = mark.querySelector('.mark-arrow--down, .mark-arrow--up');
+          const title = mark.querySelector('.title');
+          gsap.to(arrow,{ opacity:1, scaleY:1, duration:0.35, ease:'power1.out' });
+          gsap.to(title,{ opacity:1, duration:0.25, delay:0.05 });
+        }, "<+0.15");
+        waveTL.add(()=>{
+          const b=document.querySelector(`.bubble[data-for="${id}"]`);
+          const amt=window.innerWidth<560?3:4.5;
+          const up = (['up','down','up','down','up'][i]==='up');
+          if(b) gsap.to(b,{ y: up? -amt: amt, duration:1.8, yoyo:true, repeat:-1, ease:'sine.inOut' });
+        }, ">-0.2");
+      });
+
+      // Initial layout + relayout
+      layout();
+      window.addEventListener('resize', layout);
+
+      // Pause timeline until scrolled into view
+      waveTL.pause(0);
+      ScrollTrigger.create({
+        trigger: ".model-created .stage",
+        start: "top 70%",
+        onEnter: () => { layout(); waveTL.play(0); },
+        onLeaveBack: () => waveTL.pause(0)
+      });
+
+      /* ========= Section scroll transitions ========= */
+
+      // HERO
+      gsap.from(".section1 .motto", {
+        opacity: 0, y: 30, duration: 0.7,
+        scrollTrigger: { trigger: ".section1", start: "top 80%", once: true }
+      });
+      gsap.from(".section1 .img_ video", {
+        opacity: 0, y: 30, duration: 0.7, delay: 0.12,
+        scrollTrigger: { trigger: ".section1", start: "top 80%", once: true }
+      });
+
+      // MISSION
+      gsap.from(".mission p", {
+        opacity: 0, y: 20, duration: 0.6,
+        scrollTrigger: { trigger: ".mission", start: "top 75%", once: true }
+      });
+      gsap.to(".mission-cards .mission-card", {
+        opacity: 1, y: 0, duration: 0.55, stagger: 0.12, ease: "power2.out",
+        scrollTrigger: { trigger: ".mission-cards", start: "top 80%", once: true }
+      });
+
+      // HOW IT WORKS
+      gsap.to(".how-it-works h2", {
+        opacity: 1, y: 0, duration: 0.5,
+        scrollTrigger: { trigger: ".how-it-works", start: "top 80%", once: true }
+      });
+      gsap.to(".how-it-works .card", {
+        opacity: 1, y: 0, duration: 0.55, stagger: 0.12,
+        scrollTrigger: { trigger: ".how-it-works .wiw-cards", start: "top 85%", once: true }
+      });
+
+      // MODEL CREATED (heading)
+      gsap.to(".model-created h2", {
+        opacity: 1, y: 0, duration: 0.55,
+        scrollTrigger: { trigger: ".model-created", start: "top 80%", once: true }
+      });
+
+      // WHY NEUROHARMONY
+      gsap.to(".why-neuroharmony h2", {
+        opacity: 1, y: 0, duration: 0.5,
+        scrollTrigger: { trigger: ".why-neuroharmony", start: "top 80%", once: true }
+      });
+      gsap.to(".why-neuroharmony .feature", {
+        opacity: 1, y: 0, duration: 0.5, stagger: 0.1,
+        scrollTrigger: { trigger: ".why-neuroharmony .features", start: "top 85%", once: true }
+      });
+      gsap.to(".why-neuroharmony .icon-circle", {
+        opacity: 1, scale: 1, duration: 0.45, stagger: 0.08, ease: "back.out(1.6)",
+        scrollTrigger: { trigger: ".why-neuroharmony .features", start: "top 85%", once: true }
+      });
+    });
+  </script>
+</body>
+</html>

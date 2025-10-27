@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Navbar Only</title>
+
+  <!-- FontAwesome for icons -->
+  <script src="https://kit.fontawesome.com/83eb50da7d.js" crossorigin="anonymous"></script>
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,200..900;1,200..900&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    * {
+      margin: 0;
+      box-sizing: border-box;
+      font-family: "Nunito Sans", sans-serif;
+    }
+    body { background: #f4f7fa; }
+
+    .nav_container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: linear-gradient(90deg, #70aeff, #5792f1, #447be9, #3e75eb);
+    }
+    .nav_container a {
+      text-decoration: none;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .nav_options {
+      display: flex;
+      width: 40%;
+      justify-content: space-between;
+    }
+
+    .nav_options a {
+      position: relative;
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      padding-bottom: 4px; /* space for underline */
+      transition: border-color .2s ease, color .2s ease, font-weight .1s ease;
+      border-bottom: 2px solid transparent; /* default hidden underline */
+    }
+
+    /* Hover underline */
+    .nav_options a:hover {
+      border-bottom-color: white;
+      font-weight: 700;
+    }
+
+    /* ACTIVE state */
+    .nav_options a.active,
+    .nav_options a[aria-current="page"] {
+      border-bottom-color: white;
+      font-weight: 700;
+    }
+
+    .nav_options i { font-size: 15px; }
+
+    #login_btn {
+      background-color: #ffffff43;
+      padding: 8px 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color .2s ease;
+    }
+    #login_btn:hover { background-color: #5ca0f8; }
+    #login_btn i { font-size: 1rem; }
+
+    /* Keyboard accessibility */
+    .nav_options a:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 4px;
+    }
+
+    /* Responsive tweak */
+    @media (max-width: 600px) {
+      .nav_options { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="nav_container">
+    <!-- Logo -->
+    <a href="/home">
+      <img src="/static/images/logo_gemini.png" alt="Logo" height="50">
+    </a>
+
+    <!-- Navigation Links -->
+    <nav class="nav_options" id="mainNav">
+      <a href="/about"><i class="fa-solid fa-house"></i> &nbsp;About Us</a>
+      <a href="/listen_now"><i class="fa-solid fa-headphones-simple"></i> &nbsp;Listen Now</a>
+      <a href="/analyze"><i class="fa-solid fa-music"></i> &nbsp;Analyze My Track</a>
+    </nav>
+
+    <!-- Login/Logout Button (Jinja) -->
+    {% if session.get('uid') %}
+      <a href="/logout" id="login_btn" title="Logout">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Logout</span>
+      </a>
+    {% else %}
+      <a href="/login_page" id="login_btn" title="Login">
+        <i class="fa-solid fa-right-to-bracket"></i>
+        <span>Login</span>
+      </a>
+    {% endif %}
+  </header>
+
+  <script>
+    // Highlight the active nav link by current path and on click
+    document.addEventListener('DOMContentLoaded', () => {
+      const links = document.querySelectorAll('#mainNav a');
+
+      const normalize = (p) => p.replace(/\/+$/, '') || '/';
+
+      function applyActiveByPath(pathname) {
+        const current = normalize(pathname);
+        links.forEach(a => {
+          const href = normalize(a.getAttribute('href') || '');
+          const isMatch = current === href || current.startsWith(href + '/');
+          a.classList.toggle('active', isMatch);
+          if (isMatch) a.setAttribute('aria-current', 'page');
+          else a.removeAttribute('aria-current');
+        });
+      }
+
+      applyActiveByPath(window.location.pathname);
+
+      links.forEach(a => {
+        a.addEventListener('click', () => {
+          links.forEach(l => { l.classList.remove('active'); l.removeAttribute('aria-current'); });
+          a.classList.add('active');
+          a.setAttribute('aria-current', 'page');
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

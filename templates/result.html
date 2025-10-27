@@ -1,0 +1,126 @@
+<!-- templates/result.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+     <link rel="icon" type="image/png" href="/static/images/logo.png">
+  <title>Your Music Analysis</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f9fc;
+      color: #333;
+      width: 100%;
+      height: 100%;
+    }
+    .container{
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .result-container {
+      width: 80%;
+      text-align: center;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .result-container h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1.75rem;
+      /* color: #3b82f6; */
+    }
+    .result-container .subtitle {
+      margin: 0 0 1.5rem;
+      font-size: 1rem;
+      color: #555;
+    }
+    /* New box styling */
+    .result-box {
+     background: #fff;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      padding: 2rem;
+      width: 60%;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center
+    }
+    .result-box h3 {
+      margin: 0 0 1rem;
+      font-size: 1.25rem;
+      color: #1f2937;
+    }
+    .result-box p.explanation {
+      font-size: 1rem;
+      line-height: 1.4;
+      color: #444;
+      margin: 0;
+    }
+    .mood {
+      width: max-content;
+      background: #fff;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .mood img {
+      width: 100%;
+      max-width: 200px;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+    }
+    .mood-label {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    /* preserve existing drop-zone, mood-illustrations, card, overlay styles */
+  </style>
+</head>
+<body>
+ <div id="main_container">
+     {% include 'navbar.html'%}
+    <div class="container">
+      <div class="result-container">
+        <h2>Here’s Your Result</h2><br>
+        <p class="subtitle">We’ve analyzed your track—and this is the mood it best fits.</p>
+        <br>
+
+        <div class="result-box">
+          {% if result["category"] == 'Music to Calm' %}
+          <div class="mood">
+              <img src="/static/images/calm.png" alt="Music to Calm">
+              <div class="mood-label">Music to Calm</div>
+            </div>
+          {% elif result["category"] == 'Music to Boost' %}
+          <div class="mood">
+              <img src="/static/images/boost.png" alt="Music to Boost">
+              <div class="mood-label">Music to Boost</div>
+            </div>
+          {% else %}
+            <div class="mood">
+              <img src="/static/images/focus.png" alt="Music to Focus">
+              <div class="mood-label">Music to Focus</div>
+            </div>
+          {% endif %}
+          <br><br>
+
+          <p class="explanation">{{ result["explanation"] }}</p>
+        </div>
+      </div>
+    </div>
+     {% include 'footer.html' %}
+  </div>
+   
+</body>
+</html>

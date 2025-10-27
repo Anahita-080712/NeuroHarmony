@@ -1,0 +1,194 @@
+<!-- FOOTER -->
+<footer class="nh-footer" role="contentinfo">
+  <div class="nh-footer__accent" aria-hidden="true"></div>
+
+  <div class="nh-footer__inner">
+    <!-- Brand -->
+    <div class="nh-footer__brand">
+      <a href="/home" class="nh-footer__logo">
+        <img src="/static/images/logo_gemini.png" alt="NeuroHarmony logo" height="66" />
+      </a>
+    </div>
+
+    <!-- Quick Links -->
+    <nav class="nh-footer__nav" aria-label="Footer">
+      <div class="nh-footer__col">
+        <h3>Explore</h3>
+        <br>
+        <ul>
+          <li><a href="/home">Home</a></li>
+          <li><a href="/listen_now">Listen Now</a></li>
+          <li><a href="/analyze">Analyze My Track</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </div>
+
+      <div class="nh-footer__col">
+        <h3>Contact</h3>
+        <br>
+        <ul>
+          <li>
+            <a href="mailto:anahitagupta080712@gmail.com">
+              <i class="fa-solid fa-envelope"></i> Email Us
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+  <div class="nh-footer__bottom">
+    <span>© <span id="nh-year"></span> NeuroHarmony</span>
+  </div>
+</footer>
+
+<style>
+  /* -------- Footer styles (scoped by .nh-footer) -------- */
+  :root{
+      --bg:#0f172a;
+      --bg2:#0b1222;
+      --ink:#eaf2ff;
+      --muted:#e1e7f2;
+      --brand:#70aeff;
+      --brand2:#447be9;
+      --ok:#22c55e;
+      --card:#0e1628;
+      --glow: 0 10px 30px rgba(68,123,233,.35);
+      --ring: 0 0 0 2px rgba(68,123,233,.55), 0 0 0 8px rgba(68,123,233,.12);
+    }
+
+  .nh-footer{
+    --bg: var(--bg, #f9fafb);
+    --ink: var(--ink, #111827);
+    --muted: var(--muted, #4b5563);
+    --ring: var(--ring, #e5e7eb);
+    --brand: var(--brand2, #447be9); /* falls back to your brand color */
+    background: #447be9;
+    border-top: 1px solid var(--ring);
+    color: var(--ink);
+    margin-top: 40px;
+  }
+
+  /* Thin animated brand bar */
+  .nh-footer__accent{
+    height: 3px;
+    background: linear-gradient(90deg, rgba(68,123,233,.15), var(--brand), rgba(68,123,233,.15));
+    background-size: 200% 100%;
+    animation: nh-pan 6s linear infinite;
+  }
+  @keyframes nh-pan{
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .nh-footer__inner{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 22px 20px 8px;
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 24px;
+  }
+  @media (max-width: 900px){
+    .nh-footer__inner{ grid-template-columns: 1fr; }
+  }
+
+  .nh-footer__brand{
+    display: grid;
+    gap: 10px;
+  }
+  .nh-footer__logo img{
+    display: block;
+    filter: drop-shadow(0 6px 14px rgba(0,0,0,.06));
+  }
+  .nh-footer__tag{
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .nh-footer__nav{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 14px 26px;
+  }
+  @media (max-width: 520px){
+    .nh-footer__nav{ grid-template-columns: 1fr; }
+  }
+
+  .nh-footer__col h3{
+    margin: 0 0 8px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: .2px;
+  }
+  .nh-footer__col ul{
+    list-style: none;
+    padding: 0; margin: 0;
+    display: grid; gap: 8px;
+  }
+  .nh-footer__col a{
+    color: var(--ink);
+    text-decoration: none;
+    position: relative;
+    padding-bottom: 2px;
+  }
+  .nh-footer__col a::after{
+    content: "";
+    position: absolute; left: 0; bottom: 0;
+    height: 2px; width: 0%;
+    background: var(--brand);
+    transition: width .18s ease;
+  }
+  .nh-footer__col a:hover::after{ width: 100%; }
+
+  .nh-footer__socials{
+    display: flex; gap: 12px; align-items: center;
+    margin-top: 4px;
+  }
+  .nh-footer__socials a{
+    width: 34px; height: 34px; display: grid; place-items: center;
+    border: 1px solid var(--ring);
+    border-radius: 8px;
+    color: var(--ink);
+    transition: transform .12s ease, background .18s ease, color .18s ease, border-color .18s ease;
+  }
+  .nh-footer__socials a:hover{
+    transform: translateY(-1px);
+    background: #0b1222;
+    color: #fff;
+    border-color: #0b1222;
+  }
+
+  .nh-footer__bottom{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 10px 20px 18px;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    border-top: 1px solid var(--ring);
+    color: var(--muted);
+    font-size: .95rem;
+  }
+  .nh-footer__legal{
+    margin-left: auto; display: flex; gap: 14px;
+  }
+  .nh-footer__bottom a{
+    color: var(--muted); text-decoration: none; position: relative;
+  }
+  .nh-footer__bottom a::after{
+    content:""; position:absolute; left:0; bottom:-2px; height:1px; width:0;
+    background: var(--muted); transition: width .18s ease;
+  }
+  .nh-footer__bottom a:hover::after{ width:100% }
+  .nh-footer{
+    color: white;
+  }
+</style>
+
+<script>
+  // Current year
+  (function(){ 
+    var y = document.getElementById('nh-year'); 
+    if (y) y.textContent = new Date().getFullYear(); 
+  })();
+</script>

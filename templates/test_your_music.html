@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+     <link rel="icon" type="image/png" href="/static/images/logo.png">
+
+  <title>Test Your Music</title>
+  <script src="https://kit.fontawesome.com/83eb50da7d.js" crossorigin="anonymous"></script>
+  <style>
+    /* ——— your original CSS exactly as sent ——— */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f9fafb;
+      color: #333;
+    }
+    .container {
+      width: 100%;          
+      text-align: center;
+       display: flex;
+       flex-direction: column;
+      justify-content: center;
+      padding: 50px 15%;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      font-size: 1rem;
+      color: #555;
+    }
+   
+    .mood-illustrations {
+      display: flex;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .mood {
+      flex: 1;
+      background: #fff;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .mood img {
+      width: 100%;
+      max-width: 200px;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+    }
+    .mood-label {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .mood-desc {
+      font-size: 0.875rem;
+      color: #555;
+      line-height: 1.3;
+    }
+   
+    .card {
+      height: 100%;
+      max-height: 500px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      text-align: left; 
+
+      margin: 0px 100px;
+      margin-bottom: 2rem;
+    }
+    .card h2 {
+      display: flex;
+      align-items: center;
+      font-size: 1.125rem;
+      margin: 0 0 0.25rem;
+    }
+    .card h2 i {
+      margin-right: 0.5rem;
+      font-size: 1.25rem;
+      color: #3b82f6;
+    }
+    .card .formats {
+      font-size: 0.875rem;
+      color: #666;
+      margin-bottom: 1rem;
+    }
+    .drop-zone {
+      height: 300px;
+      border: 2px dashed #3b82f6;
+      border-radius: 6px;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      background: #f0f9ff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .drop-zone i {
+      font-size: 2rem;
+      color: #3b82f6;
+      margin-bottom: 0.5rem;
+    }
+    .drop-zone .prompt {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.25rem;
+    }
+    .drop-zone .help {
+      font-size: 0.875rem;
+      color: #555;
+      margin-bottom: 1rem;
+    }
+    .drop-zone button {
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid #3b82f6;
+      background: #fff;
+      color: #3b82f6;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .drop-zone button:hover {
+      background: #3b82f6;
+      color: #fff;
+    }
+    
+    #overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    #overlay img {
+      width: 120px;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="main_container">
+     {% include 'navbar.html'%}
+    <div class="container" id="main">
+      <h2>Analyze My Track</h2 ><br>
+      <p class="subtitle" style="margin-bottom: 7px;">Upload a track below and let our AI analyze its therapeutic potential.</p>
+      <p class="subtitle">Once you upload, we’ll categorize your song into one of three modes:<br></p>
+      <br><br>
+    
+      <div class="mood-illustrations">
+        <div class="mood">
+          <img src="/static/images/calm.png" alt="Music to Calm">
+          <div class="mood-label">Music to Calm</div>
+          <div class="mood-desc">Soft, soothing melodies that ease stress and promote relaxation.</div>
+        </div>
+        <div class="mood">
+          <img src="/static/images/boost.png" alt="Music to Boost">
+          <div class="mood-label">Music to Boost</div>
+          <div class="mood-desc">Upbeat, energetic tracks designed to lift your spirits and energize.</div>
+        </div>
+        <div class="mood">
+          <img src="/static/images/focus.png" alt="Music to Focus">
+          <div class="mood-label">Music to Focus</div>
+          <div class="mood-desc">Steady, unobtrusive rhythms that help you maintain concentration.</div>
+        </div>
+      </div>
+
+      <br>  
+
+      <div class="card">
+        <h2><i class="fa-solid fa-upload"></i>Upload Your Track</h2>
+        <p class="formats">Supported formats: MP3, WAV, FLAC (Max 10MB)</p>
+        <form id="uploadForm" action="/test_music" method="POST" enctype="multipart/form-data">
+          <div id="dropZone" class="drop-zone">
+            <i class="fas fa-music"></i>
+            <div class="prompt">Choose a music file</div>
+            <div class="help">Drag &amp; drop your file here, or click to browse</div>
+            <input type="file" name="track" id="fileInput" accept="audio/*" style="position:absolute; width:100%; height:100%; opacity:0; cursor:pointer;">
+          </div>
+        </form>
+      </div>
+    </div>
+      {% include 'footer.html' %}
+  </div>
+
+  <div id="overlay">
+    <img src="/static/images/loading.gif" alt="Loading…">
+  </div>
+
+  <script>
+    const dropZone  = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const form      = document.getElementById('uploadForm');
+    const main      = document.getElementById('main_container');
+    const overlay   = document.getElementById('overlay');
+
+    // when form submits, hide main content and show overlay
+    form.addEventListener('submit', () => {
+      main.style.display = 'none';
+      overlay.style.display = 'flex';
+    });
+
+    // styling for drag over
+    ['dragenter','dragover'].forEach(evt =>
+      dropZone.addEventListener(evt, e => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+      })
+    );
+    ['dragleave','drop'].forEach(evt =>
+      dropZone.addEventListener(evt, e => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+      })
+    );
+
+    // handle drop
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('audio/')) {
+        fileInput.files = e.dataTransfer.files;
+        form.submit();
+        main.style.display = 'none';
+      overlay.style.display = 'flex';
+      } else {
+        alert('Please drop a valid audio file.');
+      }
+    });
+
+    // handle browse selection
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      if (file && file.type.startsWith('audio/')) {
+        form.submit();
+        main.style.display = 'none';
+      overlay.style.display = 'flex';
+      } else {
+        alert('Please select a valid audio file.');
+        fileInput.value = '';
+      }
+    });
+  </script>
+
+</body>
+</html>

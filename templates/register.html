@@ -1,0 +1,129 @@
+<html>
+    <head>
+           <link rel="icon" type="image/png" href="/static/images/logo.png">
+  <title>NeuroHarmony</title>
+         <script src="https://kit.fontawesome.com/83eb50da7d.js" crossorigin="anonymous"></script>
+        <style>
+            /* body{
+                background-image: url('/static/images/bg.jpg');
+                background-size: cover;
+           } */
+
+            form{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            
+               
+            }
+            .main_container {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            
+            }
+            #password{
+                height: max-content;
+            }
+            input[type=email], input[type=password], input[type=text]{
+                width: 300px;
+                height: 30px;
+                border: 2px solid black;
+                border-radius: 7px 0px 7px 0px;
+                background-color: transparent;
+                padding: 17px 35px;
+                font-size: 16px;
+            }
+        
+            input[type=submit]{
+                width: 200px;
+                height: 40px;
+                border: none;
+                border-radius: 10px;
+                font-size: 18px;
+                background-color: rgb(2, 175, 249);
+                font-weight: 600;
+            }
+            .form_container div{
+                position: relative;
+            }
+            .left{
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                font-size: 18px;
+                color: rgb(2, 175, 249);
+            }
+            .right{
+                position: absolute;
+                top:11px;
+                right: 10px;
+                font-size: 16px;
+                color: rgb(2, 175, 249);
+            }
+        </style>
+
+    </head>
+    <body>
+       
+        <div class="main_container">
+            <div class="form_container">
+               
+                <form action="/register" method="post"> 
+                     <h1>SIGN UP</h1>
+                     <div style="height: 50px;"></div>
+                     <div>
+                        <i class="fa-solid fa-envelope left"></i><input type="email" name="email" placeholder="Email">
+                    </div><br><br>
+                    <div id="password">
+                        <i class="fa-solid fa-lock left" ></i><input type="password" name = "password" placeholder="Password" id="p">
+                       <i class="fa-solid fa-eye right" onclick="showPassword()"></i>
+                    </div><br><br>
+                     <div id="confirm_password">
+                        <i class="fa-solid fa-lock left"></i><input type="password" name = "password" placeholder="Confirm password" id="cp">
+                       <i class="fa-solid fa-eye right" onclick="showConfirmPassword()"></i>
+                    </div>
+                    <div style="height: 50px;"></div>
+                    <input type="submit" value="Sign Up">
+                     <br>
+                    <p> Already have an account? <a href="{{url_for('login_page')}}" style="color: rgb(2, 175, 249); text-decoration: none; font-weight: 600;"> Sign In </a></p>
+                </form>
+            </div>
+        </div>
+        <script>
+            var flag = false;
+            var flag_c = false;
+            function showPassword(){
+                if(!flag){
+                    console.log("sfdcythgvds");
+                    document.getElementsByClassName("right")[0].className = "fa-solid fa-eye-slash right";
+                    document.getElementById("p").type = "text";
+                    flag = true;
+                }
+                else{
+                    console.log("sfdcythgvds");
+                    document.getElementsByClassName("right")[0].className = "fa-solid fa-eye right";
+                    document.getElementById("p").type = "password";
+                    flag = false;
+                }
+            }
+             function showConfirmPassword(){
+                if(!flag_c){
+                    console.log("sfdcythgvds");
+                    document.getElementsByClassName("right")[1].className = "fa-solid fa-eye-slash right";
+                    document.getElementById("cp").type = "text";
+                    flag_c = true;
+                }
+                else{
+                    console.log("sfdcythgvds");
+                    document.getElementsByClassName("right")[1].className = "fa-solid fa-eye right";
+                    document.getElementById("cp").type = "password";
+                    flag_c = false;
+                }
+            }
+        </script>
+    </body>
+</html>
